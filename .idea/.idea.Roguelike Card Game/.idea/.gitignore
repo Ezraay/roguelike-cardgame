@@ -1,0 +1,10 @@
+﻿# Default ignored files
+/shelf/
+/workspace.xml
+# Rider ignored files
+/modules.xml
+/projectSettingsUpdater.xml
+/contentModel.xml
+/.idea.Roguelike Card Game.iml
+# Editor-based HTTP Client requests
+/httpRequests/
