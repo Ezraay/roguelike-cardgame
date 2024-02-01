@@ -1,0 +1,24 @@
+﻿## Minimum Viable Product
+- Show cards in hand
+- Allow use of following cards
+  - Add block to self
+  - Hit target
+  - Hit all targets
+- Energy per turn, reset on end of turn
+- Draw 5 cards on start of turn
+- Discard cards on end of turn
+- If no cards in deck, shuffle discard pile into deck
+- Enemies take turn after you front to back
+- Enemies' intent is shown
+- When all enemies defeated, get loot to add to collection
+- When player is defeated, deck is destroyed
+- 2 levels with different enemies
+  - First has simple enemies, tutorial
+  - Second has one floor of enemies, second floor is boss
+- Display game
+  - Enemy display and target selection
+  - Enemy intent
+  - Card display and selection
+  - Energy and energy per turn
+  - Deck and discard view
+  - Health and block

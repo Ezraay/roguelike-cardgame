@@ -1,12 +1,12 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Game : MonoBehaviour
 {
-    private void Start()
-    {
-    }
+    public Battle Battle { get; private set; }
 
-    private void Update()
+    private void Awake()
     {
+        Battle = new Battle();
+        Battle.Start();
     }
 }
