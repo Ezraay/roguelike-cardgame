@@ -32,4 +32,9 @@ public class Card
                 throw new ArgumentOutOfRangeException();
         }
     }
+
+    public string GetDescription()
+    {
+        return string.Join(Environment.NewLine, Array.ConvertAll(_effects, effect => effect.GetDescription(null)));
+    }
 }

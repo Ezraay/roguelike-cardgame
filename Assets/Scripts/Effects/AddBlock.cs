@@ -13,5 +13,10 @@
         {
             target.AddBlock(_block);
         }
+
+        public string GetDescription(Entity author)
+        {
+            return $"Gain {_block} block.";
+        }
     }
 }

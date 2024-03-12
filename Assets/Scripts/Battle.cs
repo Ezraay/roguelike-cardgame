@@ -24,6 +24,10 @@ public class Battle
             new("Defend", TargetingType.Self, 1, new IEffect[] { new AddBlock(5) })
         });
         Enemies.Add(new Entity(20));
+        Enemies.Add(new Entity(15));
+
+        foreach (var enemy in Enemies) Intents.Add(enemy, new List<Card>());
+        CreateIntents();
     }
 
     public void Start()
@@ -50,12 +54,9 @@ public class Battle
         foreach (var enemy in Enemies)
         {
             var intent = Intents[enemy];
-            foreach (var card in intent)
-            {
-                PerformCard(card, enemy, Player.Entity);
-            }
+            foreach (var card in intent) PerformCard(card, enemy, Player.Entity);
         }
-        
+
         CreateIntents();
     }
 

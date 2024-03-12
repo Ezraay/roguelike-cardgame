@@ -13,5 +13,10 @@
         {
             target.TakeDamage(_damage);
         }
+
+        public string GetDescription(Entity author)
+        {
+            return $"Deal {_damage} damage.";
+        }
     }
 }
