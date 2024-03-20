@@ -35,10 +35,13 @@ public class Battle
         Player.StartTurn();
     }
 
-    public void UseCard(Card card, Entity target)
+    public bool UseCard(Card card, Entity target)
     {
-        Player.UseEnergy(1);
+        var cost = 1;
+        if (Player.Energy < cost) return false;
+        Player.UseEnergy(cost);
         PerformCard(card, Player.Entity, target);
+        return true;
     }
 
     public void EndTurn()

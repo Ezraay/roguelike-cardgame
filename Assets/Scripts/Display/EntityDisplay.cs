@@ -11,7 +11,7 @@ namespace Display
         [SerializeField] private TMP_Text healthText;
         [SerializeField] private Image healthBar;
         [SerializeField] private Vector2 rectSize;
-        private Entity _entity;
+        public Entity Entity { get; private set; }
         private Rect _rect;
 
         private void Awake()
@@ -21,14 +21,14 @@ namespace Display
 
         private void Update()
         {
-            if (_entity == null) return;
-            healthText.text = $"{_entity.Health}/{_entity.MaxHealth}";
-            healthBar.fillAmount = (float)_entity.Health / _entity.MaxHealth;
+            if (Entity == null) return;
+            healthText.text = $"{Entity.Health}/{Entity.MaxHealth}";
+            healthBar.fillAmount = (float)Entity.Health / Entity.MaxHealth;
         }
 
         public void Show(Entity entity)
         {
-            _entity = entity;
+            Entity = entity;
         }
 
         public bool IsMouseOver()

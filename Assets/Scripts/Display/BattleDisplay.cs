@@ -30,7 +30,8 @@ namespace Display
             {
                 var enemy = game.Battle.Enemies[i];
                 Vector3 position = enemyOffset * i - halfOffset;
-                var enemyDisplay = Instantiate(entityDisplayPrefab, enemyDisplayParent.position + position, Quaternion.identity, enemyDisplayParent);
+                var enemyDisplay = Instantiate(entityDisplayPrefab, enemyDisplayParent.position + position,
+                    Quaternion.identity, enemyDisplayParent);
                 enemyDisplay.Show(enemy);
                 // enemyDisplay.transform.localPosition = enemyOffset * i - halfOffset;
                 _enemyDisplays[i] = enemyDisplay;
@@ -45,10 +46,8 @@ namespace Display
 
             // Show player energy
             energyDisplay.Show(game.Battle.Player);
-
-            // TODO Allow player to play card
-
-            // TODO Allow player to target card
+            
+            // TODO Update hand after ending/starting turn
 
             // TODO Show animated card actions
         }
@@ -86,14 +85,15 @@ namespace Display
                 }
 
                 EntityDisplay selectedEnemy = null;
-                foreach (var enemyDisplay in _enemyDisplays)
-                    if (enemyDisplay.IsMouseOver())
-                    {
-                        selectedEnemy = enemyDisplay;
-                        break;
-                    }
+                if (_draggedCard.Card.TargetingType == TargetingType.Enemy)
+                    foreach (var enemyDisplay in _enemyDisplays)
+                        if (enemyDisplay.IsMouseOver())
+                        {
+                            selectedEnemy = enemyDisplay;
+                            break;
+                        }
 
-                if (_draggedCardActive)
+                if (_draggedCardActive && _draggedCard.Card.TargetingType == TargetingType.Enemy)
                 {
                     if (selectedEnemy != null)
                         DrawBasics2D.Vector(handDisplay.transform.position, selectedEnemy.transform.position);
@@ -106,11 +106,32 @@ namespace Display
                 position.z = 0;
                 _draggedCard.transform.position = position;
 
-                if (Input.GetMouseButtonUp(0))
+                if (Input.GetMouseButtonUp(0) && _draggedCard != null)
                 {
-                    if (_draggedCardActive)
-                        handDisplay.AddCard(_draggedCard, _draggedCardIndex);
-                    _draggedCard.gameObject.SetActive(true);
+                    var card = _draggedCard.Card;
+                    var returnCard = true;
+                    if (card.TargetingType == TargetingType.Enemy)
+                    {
+                        if (selectedEnemy != null && game.Battle.UseCard(card, selectedEnemy.Entity))
+                            returnCard = false;
+                    }
+                    else if (game.Battle.UseCard(card, game.Battle.Player.Entity))
+                    {
+                        returnCard = false;
+                    }
+
+
+                    if (returnCard)
+                    {
+                        if (_draggedCardActive)
+                            handDisplay.AddCard(_draggedCard, _draggedCardIndex);
+                        _draggedCard.gameObject.SetActive(true);
+                    }
+                    else
+                    {
+                        Destroy(_draggedCard.gameObject);
+                    }
+
                     _draggedCard = null;
                     handDisplay.RepositionCards();
                 }
