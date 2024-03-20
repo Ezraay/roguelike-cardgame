@@ -47,6 +47,9 @@ public class Battle
     public void EndTurn()
     {
         Player.EndTurn();
+        foreach (var enemy in Enemies)
+            enemy.OnStartTurn();
+        
         PerformEnemyTurns();
         CreateIntents();
         Player.StartTurn();
@@ -67,9 +70,8 @@ public class Battle
     {
         switch (card.TargetingType)
         {
-            case TargetingType.RandomAlly:
             case TargetingType.Self:
-                target = Player.Entity;
+                target = author;
                 break;
         }
 
