@@ -60,7 +60,7 @@ namespace Display
             RepositionCards();
         }
 
-        private void RepositionCards()
+        public void RepositionCards()
         {
             // Calculate half offset for positioning cards
             var cardCount = transform.childCount;
@@ -80,9 +80,10 @@ namespace Display
             // Calculate size of the container
             var containerWidth = cardSpacing.x * spacingFactor + CardSize.x * cardCount;
             var containerHeight = CardSize.y;
-            var containerX = transform.position.x - halfOffset.x - CardSize.x / 2 - padding.x;
-            var containerY = transform.position.y - CardSize.y / 2 - padding.y;
-            _size = new Rect(containerX, containerY, containerWidth + padding.x * 2, containerHeight + padding.y * 2);
+            var containerPosition = (Vector2)transform.position - halfOffset - CardSize / 2 - padding;
+            // var containerX = transform.position.x - halfOffset.x - CardSize.x / 2 - padding.x;
+            // var containerY = transform.position.y - halfOffset.y - CardSize.y / 2 - padding.y;
+            _size = new Rect(containerPosition.x, containerPosition.y, containerWidth + padding.x * 2, containerHeight + padding.y * 2);
         }
 
         public bool IsMouseOver()

@@ -14,6 +14,7 @@ namespace Display
         [SerializeField] private EnergyDisplay energyDisplay;
         private CardDisplay _draggedCard;
         private int _draggedCardIndex;
+        private bool _draggedCardActive;
 
         private void Start()
         {
@@ -59,25 +60,37 @@ namespace Display
                 {
                     _draggedCard = hit.collider.GetComponent<CardDisplay>();
                     _draggedCardIndex = handDisplay.GetIndexOf(_draggedCard);
-                    handDisplay.RemoveCard(_draggedCard);
+                    _draggedCardActive = false;
                 }
-            }
-
-            if (Input.GetMouseButtonUp(0) && _draggedCard != null)
-            {
-                handDisplay.AddCard(_draggedCard, _draggedCardIndex);
-                _draggedCard = null;
             }
 
             if (_draggedCard != null)
             {
+                if (handDisplay.IsMouseOver() && _draggedCardActive)
+                {
+                    _draggedCardActive = false;
+                    handDisplay.AddCard(_draggedCard, _draggedCardIndex);
+                }
+                else if (!handDisplay.IsMouseOver() && !_draggedCardActive)
+                {
+                    _draggedCardActive = true;
+                    handDisplay.RemoveCard(_draggedCard);
+                    
+                    // TODO Draw target arrow if card is targetable
+                }
+                
                 var position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 position.z = 0;
                 _draggedCard.transform.position = position;
             }
             
-            if (handDisplay.IsMouseOver())
-                Debug.Log("A");
+            if (Input.GetMouseButtonUp(0) && _draggedCard != null)
+            {
+                if (_draggedCardActive)
+                    handDisplay.AddCard(_draggedCard, _draggedCardIndex);
+                _draggedCard = null;
+                handDisplay.RepositionCards();
+            }
         }
 
         public void EndTurn()
