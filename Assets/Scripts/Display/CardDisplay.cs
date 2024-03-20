@@ -9,9 +9,11 @@ namespace Display
         [SerializeField] private TMP_Text costText;
         [SerializeField] private TMP_Text descriptionText;
         public static Vector2 CardSize = new Vector2(4.5f, 6f);
-        
+        public Card Card { get; private set; }
+
         public void ShowCard(Card card, bool showCost = true)
         {
+            Card = card;
             nameText.text = card.Name;
             costText.text = card.EnergyCost.ToString();
             costText.gameObject.SetActive(showCost);

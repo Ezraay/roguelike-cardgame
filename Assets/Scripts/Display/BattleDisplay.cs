@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DrawXXL;
+using Effects;
 using UnityEngine;
 
 namespace Display
@@ -12,9 +13,10 @@ namespace Display
         [SerializeField] private Transform enemyDisplayParent;
         [SerializeField] private HandDisplay handDisplay;
         [SerializeField] private EnergyDisplay energyDisplay;
-        private CardDisplay _draggedCard;
-        private int _draggedCardIndex;
         private bool _draggedCardActive;
+        private CardDisplay _draggedCard;
+        private EntityDisplay[] _enemyDisplays;
+        private int _draggedCardIndex;
 
         private void Start()
         {
@@ -22,31 +24,33 @@ namespace Display
             var playerDisplay = Instantiate(entityDisplayPrefab, playerDisplayParent);
             playerDisplay.Show(game.Battle.Player.Entity);
 
-            var halfOffset = enemyOffset * (game.Battle.Enemies.Count-1) / 2;
+            var halfOffset = enemyOffset * (game.Battle.Enemies.Count - 1) / 2;
+            _enemyDisplays = new EntityDisplay[game.Battle.Enemies.Count];
             for (var i = 0; i < game.Battle.Enemies.Count; i++)
             {
                 var enemy = game.Battle.Enemies[i];
-                var enemyDisplay = Instantiate(entityDisplayPrefab, enemyDisplayParent);
+                Vector3 position = enemyOffset * i - halfOffset;
+                var enemyDisplay = Instantiate(entityDisplayPrefab, enemyDisplayParent.position + position, Quaternion.identity, enemyDisplayParent);
                 enemyDisplay.Show(enemy);
-                enemyDisplay.transform.localPosition = enemyOffset * i - halfOffset;
+                // enemyDisplay.transform.localPosition = enemyOffset * i - halfOffset;
+                _enemyDisplays[i] = enemyDisplay;
             }
 
             // TODO Show enemy intents
-            
+
             // Show player cards
             handDisplay.Show(game.Battle.Player);
-            
+
             // TODO Show player deck and discard
-            
+
             // Show player energy
             energyDisplay.Show(game.Battle.Player);
-            
+
             // TODO Allow player to play card
-            
+
             // TODO Allow player to target card
 
             // TODO Show animated card actions
-            
         }
 
         private void Update()
@@ -70,26 +74,46 @@ namespace Display
                 {
                     _draggedCardActive = false;
                     handDisplay.AddCard(_draggedCard, _draggedCardIndex);
+                    _draggedCard.gameObject.SetActive(true);
                 }
                 else if (!handDisplay.IsMouseOver() && !_draggedCardActive)
                 {
                     _draggedCardActive = true;
                     handDisplay.RemoveCard(_draggedCard);
-                    
-                    // TODO Draw target arrow if card is targetable
+
+                    if (_draggedCard.Card.TargetingType == TargetingType.Enemy)
+                        _draggedCard.gameObject.SetActive(false);
                 }
-                
+
+                EntityDisplay selectedEnemy = null;
+                foreach (var enemyDisplay in _enemyDisplays)
+                    if (enemyDisplay.IsMouseOver())
+                    {
+                        selectedEnemy = enemyDisplay;
+                        break;
+                    }
+
+                if (_draggedCardActive)
+                {
+                    if (selectedEnemy != null)
+                        DrawBasics2D.Vector(handDisplay.transform.position, selectedEnemy.transform.position);
+                    else
+                        DrawBasics2D.Vector(handDisplay.transform.position,
+                            Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                }
+
                 var position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 position.z = 0;
                 _draggedCard.transform.position = position;
-            }
-            
-            if (Input.GetMouseButtonUp(0) && _draggedCard != null)
-            {
-                if (_draggedCardActive)
-                    handDisplay.AddCard(_draggedCard, _draggedCardIndex);
-                _draggedCard = null;
-                handDisplay.RepositionCards();
+
+                if (Input.GetMouseButtonUp(0))
+                {
+                    if (_draggedCardActive)
+                        handDisplay.AddCard(_draggedCard, _draggedCardIndex);
+                    _draggedCard.gameObject.SetActive(true);
+                    _draggedCard = null;
+                    handDisplay.RepositionCards();
+                }
             }
         }
 
