@@ -142,6 +142,7 @@ namespace Display
         {
             // Allow player to end turn
             game.Battle.EndTurn();
+            handDisplay.Show(game.Battle.Player);
         }
     }
 }

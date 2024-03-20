@@ -63,7 +63,7 @@ namespace Display
         public void RepositionCards()
         {
             // Calculate half offset for positioning cards
-            var cardCount = transform.childCount;
+            var cardCount = _cardDisplays.Count;
             var spacingFactor = 2 * (cardCount - 1);
             var cardSpacingTotal = cardSpacing * spacingFactor;
             var cardSizeTotal = CardSize * cardSizeMultiplier * (cardCount - 1);
