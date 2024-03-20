@@ -2,6 +2,7 @@
 using DrawXXL;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace Display
@@ -9,7 +10,9 @@ namespace Display
     public class EntityDisplay : MonoBehaviour
     {
         [SerializeField] private TMP_Text healthText;
+        [SerializeField] private TMP_Text blockText;
         [SerializeField] private Image healthBar;
+        [SerializeField] private Image blockBar;
         [SerializeField] private Vector2 rectSize;
         public Entity Entity { get; private set; }
         private Rect _rect;
@@ -24,6 +27,9 @@ namespace Display
             if (Entity == null) return;
             healthText.text = $"{Entity.Health}/{Entity.MaxHealth}";
             healthBar.fillAmount = (float)Entity.Health / Entity.MaxHealth;
+            
+            blockText.text = Entity.Block > 0 ? $"{Entity.Block}" : "";
+            blockBar.fillAmount = (float)Entity.Block / Entity.MaxHealth;
         }
 
         public void Show(Entity entity)
