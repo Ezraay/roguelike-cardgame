@@ -33,7 +33,6 @@ namespace Display
                 var enemyDisplay = Instantiate(entityDisplayPrefab, enemyDisplayParent.position + position,
                     Quaternion.identity, enemyDisplayParent);
                 enemyDisplay.Show(enemy);
-                // enemyDisplay.transform.localPosition = enemyOffset * i - halfOffset;
                 _enemyDisplays[i] = enemyDisplay;
             }
 
@@ -46,10 +45,12 @@ namespace Display
 
             // Show player energy
             energyDisplay.Show(game.Battle.Player);
-            
-            // TODO Update hand after ending/starting turn
 
             // TODO Show animated card actions
+
+            // TODO Destroy dead enemies
+
+            // TODO Game over screen
         }
 
         private void Update()
@@ -108,16 +109,19 @@ namespace Display
 
                 if (Input.GetMouseButtonUp(0) && _draggedCard != null)
                 {
-                    var card = _draggedCard.Card;
                     var returnCard = true;
-                    if (card.TargetingType == TargetingType.Enemy)
+                    if (!handDisplay.IsMouseOver())
                     {
-                        if (selectedEnemy != null && game.Battle.UseCard(card, selectedEnemy.Entity))
+                        var card = _draggedCard.Card;
+                        if (card.TargetingType == TargetingType.Enemy)
+                        {
+                            if (selectedEnemy != null && game.Battle.UseCard(card, selectedEnemy.Entity))
+                                returnCard = false;
+                        }
+                        else if (game.Battle.UseCard(card, game.Battle.Player.Entity))
+                        {
                             returnCard = false;
-                    }
-                    else if (game.Battle.UseCard(card, game.Battle.Player.Entity))
-                    {
-                        returnCard = false;
+                        }
                     }
 
 
