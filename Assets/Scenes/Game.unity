@@ -742,7 +742,9 @@ MonoBehaviour:
   cardParent: {fileID: 780728301}
   cardSpacing: {x: 0.2, y: 0}
   padding: {x: 0.5, y: 0.5}
-  cardSizeMultiplier: {x: 1, y: 0}
+  cardSizeMultiplier: {x: 0.9, y: 0}
+  middleCardOffset: {x: 0, y: -0.1}
+  cardRotation: -2
 --- !u!1 &839765268
 GameObject:
   m_ObjectHideFlags: 0

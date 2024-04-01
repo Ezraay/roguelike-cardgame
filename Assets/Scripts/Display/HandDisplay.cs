@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using DrawXXL;
-using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Display
@@ -13,10 +12,13 @@ namespace Display
         [SerializeField] private Vector2 cardSpacing;
         [SerializeField] private Vector2 padding;
         [SerializeField] private Vector2 cardSizeMultiplier;
+        [SerializeField] private Vector2 middleCardOffset;
+
+        [SerializeField] private float cardRotation;
 
         private readonly List<CardDisplay> _cardDisplays = new();
         private Player _player;
-        [ShowInInspector] private Rect _size;
+        private Rect _size;
         private Vector2 CardSize => CardDisplay.CardSize;
 
         private void OnDrawGizmos()
@@ -68,21 +70,22 @@ namespace Display
             var cardSpacingTotal = cardSpacing * spacingFactor;
             var cardSizeTotal = CardSize * cardSizeMultiplier * (cardCount - 1);
             var halfOffset = (cardSpacingTotal + cardSizeTotal) / 2;
+            var halfRotation = cardRotation * (cardCount - 1) / 2;
 
             // Position each card
             for (var i = 0; i < cardCount; i++)
             {
                 var cardDisplay = _cardDisplays[i];
-                var position = (cardSpacing * 2 + CardSize * cardSizeMultiplier) * i - halfOffset;
+                var position = (cardSpacing * 2 + CardSize * cardSizeMultiplier) * i - halfOffset +
+                               middleCardOffset * Mathf.Pow(Mathf.Abs((i) - (cardCount-1) / 2f), 2);
                 cardDisplay.transform.localPosition = position;
+                cardDisplay.transform.rotation = Quaternion.Euler(0, 0, cardRotation * i - halfRotation);
             }
 
             // Calculate size of the container
             var containerWidth = cardSpacing.x * spacingFactor + CardSize.x * cardCount;
             var containerHeight = CardSize.y;
             var containerPosition = (Vector2)transform.position - halfOffset - CardSize / 2 - padding;
-            // var containerX = transform.position.x - halfOffset.x - CardSize.x / 2 - padding.x;
-            // var containerY = transform.position.y - halfOffset.y - CardSize.y / 2 - padding.y;
             _size = new Rect(containerPosition.x, containerPosition.y, containerWidth + padding.x * 2, containerHeight + padding.y * 2);
         }
 

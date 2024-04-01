@@ -23,8 +23,8 @@ public class Battle
             new("Defend", TargetingType.Self, 1, new IEffect[] { new AddBlock(5) }),
             new("Defend", TargetingType.Self, 1, new IEffect[] { new AddBlock(5) })
         });
-        Enemies.Add(new Entity(20));
-        Enemies.Add(new Entity(15));
+        
+        SpawnEnemies();
 
         foreach (var enemy in Enemies) Intents.Add(enemy, new List<Card>());
         CreateIntents();
@@ -76,6 +76,13 @@ public class Battle
         }
 
         card.Use(author, target);
+    }
+
+    private void SpawnEnemies()
+    {
+        // TODO Move to dedicated behaviour class
+        Enemies.Add(new Entity(20));
+        Enemies.Add(new Entity(15));
     }
 
     private void CreateIntents()
