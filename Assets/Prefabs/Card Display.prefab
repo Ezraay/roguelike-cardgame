@@ -389,6 +389,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 269038b523934ca69ccaf9f122217379, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canvas: {fileID: 2626254294607679507}
   nameText: {fileID: 5331655756686065598}
   costText: {fileID: 3758166346045577088}
   descriptionText: {fileID: 9121853523286784486}

@@ -9,6 +9,7 @@ namespace Display
         [SerializeField] private CardDisplay cardDisplayPrefab;
         [SerializeField] private Transform cardParent;
 
+        [SerializeField] private int sortingOrder;
         [SerializeField] private Vector2 cardSpacing;
         [SerializeField] private Vector2 padding;
         [SerializeField] private Vector2 cardSizeMultiplier;
@@ -17,7 +18,6 @@ namespace Display
         [SerializeField] private float cardRotation;
 
         private readonly List<CardDisplay> _cardDisplays = new();
-        private Player _player;
         private Rect _size;
         private Vector2 CardSize => CardDisplay.CardSize;
 
@@ -26,17 +26,17 @@ namespace Display
             DrawShapes.Rectangle(_size);
         }
 
-        public void Show(Player player)
+        public void Show(List<Card> cards)
         {
             foreach (Transform child in cardParent) Destroy(child.gameObject);
             _cardDisplays.Clear();
-            _player = player;
 
-            for (var i = 0; i < player.Hand.Count; i++)
+            for (var i = 0; i < cards.Count; i++)
             {
-                var card = player.Hand[i];
+                var card = cards[i];
                 var cardDisplay = Instantiate(cardDisplayPrefab, cardParent);
                 cardDisplay.ShowCard(card);
+                cardDisplay.SetOrder(sortingOrder);
                 _cardDisplays.Add(cardDisplay);
             }
 

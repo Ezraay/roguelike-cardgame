@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using DrawXXL;
 using TMPro;
 using UnityEngine;
@@ -14,6 +15,9 @@ namespace Display
         [SerializeField] private Image healthBar;
         [SerializeField] private Image blockBar;
         [SerializeField] private Vector2 rectSize;
+        [SerializeField] private CardDisplay cardDisplayPrefab;
+        [SerializeField] private HandDisplay intentDisplay;
+        
         public Entity Entity { get; private set; }
         private Rect _rect;
 
@@ -30,6 +34,11 @@ namespace Display
             
             blockText.text = Entity.Block > 0 ? $"{Entity.Block}" : "";
             blockBar.fillAmount = (float)Entity.Block / Entity.MaxHealth;
+        }
+
+        public void ShowIntents(List<Card> intents)
+        {
+            intentDisplay.Show(intents);
         }
 
         public void Show(Entity entity)

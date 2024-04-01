@@ -7,6 +7,7 @@ namespace Display
 {
     public class CardDisplay : MonoBehaviour
     {
+        [SerializeField] private Canvas canvas;
         [SerializeField] private TMP_Text nameText;
         [SerializeField] private TMP_Text costText;
         [SerializeField] private TMP_Text descriptionText;
@@ -20,6 +21,11 @@ namespace Display
             costText.text = card.EnergyCost.ToString();
             costText.gameObject.SetActive(showCost);
             descriptionText.text = card.GetDescription();
+        }
+
+        public void SetOrder(int sortingOrder)
+        {
+            canvas.sortingOrder = sortingOrder;
         }
 
         private void Update()

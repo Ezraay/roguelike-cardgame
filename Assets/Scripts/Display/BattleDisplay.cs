@@ -35,18 +35,21 @@ namespace Display
                     Quaternion.identity, enemyDisplayParent);
                 enemyDisplay.Show(enemy);
                 _enemyDisplays.Add(enemyDisplay);
-
+                
+                // Destroy dead enemies
                 enemy.OnDeath += () =>
                 {
                     Destroy(enemyDisplay.gameObject);
                     _enemyDisplays.Remove(enemyDisplay);
                 };
+                
+                // Show enemy intents
+                enemyDisplay.ShowIntents(game.Battle.Intents[enemy]);
             }
 
-            // TODO Show enemy intents
 
             // Show player cards
-            handDisplay.Show(game.Battle.Player);
+            handDisplay.Show(game.Battle.Player.Hand);
 
             // TODO Show player deck and discard
 
@@ -55,7 +58,6 @@ namespace Display
 
             // TODO Show animated card actions
 
-            // TODO Destroy dead enemies
 
             // TODO Game over screen
         }
@@ -153,7 +155,13 @@ namespace Display
         {
             // Allow player to end turn
             game.Battle.EndTurn();
-            handDisplay.Show(game.Battle.Player);
+            handDisplay.Show(game.Battle.Player.Hand);
+            for (var i = 0; i < game.Battle.Enemies.Count; i++)
+            {
+                var enemy = game.Battle.Enemies[i];
+                var intents = game.Battle.Intents[enemy];
+                _enemyDisplays[i].ShowIntents(intents);
+            }
         }
     }
 }
