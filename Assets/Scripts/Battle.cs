@@ -26,7 +26,15 @@ public class Battle
         
         SpawnEnemies();
 
-        foreach (var enemy in Enemies) Intents.Add(enemy, new List<Card>());
+        foreach (var enemy in Enemies)
+        {
+            Intents.Add(enemy, new List<Card>());
+            enemy.OnDeath += () =>
+            {
+                Enemies.Remove(enemy);
+                Intents.Remove(enemy);
+            };
+        }
         CreateIntents();
     }
 

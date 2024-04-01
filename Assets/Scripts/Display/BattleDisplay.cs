@@ -1,4 +1,5 @@
-﻿using DrawXXL;
+﻿using System.Collections.Generic;
+using DrawXXL;
 using Effects;
 using UnityEngine;
 
@@ -15,7 +16,7 @@ namespace Display
         [SerializeField] private EnergyDisplay energyDisplay;
         private bool _draggedCardActive;
         private CardDisplay _draggedCard;
-        private EntityDisplay[] _enemyDisplays;
+        private List<EntityDisplay> _enemyDisplays = new();
         private int _draggedCardIndex;
 
         private void Start()
@@ -25,7 +26,7 @@ namespace Display
             playerDisplay.Show(game.Battle.Player.Entity);
 
             var halfOffset = enemyOffset * (game.Battle.Enemies.Count - 1) / 2;
-            _enemyDisplays = new EntityDisplay[game.Battle.Enemies.Count];
+            _enemyDisplays.Clear();
             for (var i = 0; i < game.Battle.Enemies.Count; i++)
             {
                 var enemy = game.Battle.Enemies[i];
@@ -33,7 +34,13 @@ namespace Display
                 var enemyDisplay = Instantiate(entityDisplayPrefab, enemyDisplayParent.position + position,
                     Quaternion.identity, enemyDisplayParent);
                 enemyDisplay.Show(enemy);
-                _enemyDisplays[i] = enemyDisplay;
+                _enemyDisplays.Add(enemyDisplay);
+
+                enemy.OnDeath += () =>
+                {
+                    Destroy(enemyDisplay.gameObject);
+                    _enemyDisplays.Remove(enemyDisplay);
+                };
             }
 
             // TODO Show enemy intents
