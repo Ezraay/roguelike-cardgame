@@ -77,16 +77,18 @@ namespace Display
             {
                 var cardDisplay = _cardDisplays[i];
                 var position = (cardSpacing * 2 + CardSize * cardSizeMultiplier) * i - halfOffset +
-                               middleCardOffset * Mathf.Pow(Mathf.Abs((i) - (cardCount-1) / 2f), 2);
+                               middleCardOffset * Mathf.Pow(Mathf.Abs(i - (cardCount - 1) / 2f), 2);
                 cardDisplay.transform.localPosition = position;
                 cardDisplay.transform.rotation = Quaternion.Euler(0, 0, cardRotation * i - halfRotation);
             }
 
             // Calculate size of the container
-            var containerWidth = cardSpacing.x * spacingFactor + CardSize.x * (cardCount-1) * cardSizeMultiplier.x + CardSize.x;
+            var containerWidth = cardSpacing.x * spacingFactor + CardSize.x * (cardCount - 1) * cardSizeMultiplier.x +
+                                 CardSize.x;
             var containerHeight = cardSpacing.y * spacingFactor + CardSize.y;
             var containerPosition = (Vector2)transform.position - halfOffset - CardSize / 2 - padding;
-            _size = new Rect(containerPosition.x, containerPosition.y, containerWidth + padding.x * 2, containerHeight + padding.y * 2);
+            _size = new Rect(containerPosition.x, containerPosition.y, containerWidth + padding.x * 2,
+                containerHeight + padding.y * 2);
         }
 
         public bool IsMouseOver()

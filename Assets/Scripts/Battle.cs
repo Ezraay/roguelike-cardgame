@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class Battle
 {
+    private readonly CardFactory _cardFactory;
     public readonly List<Enemy> Enemies = new();
     public readonly Player Player;
-    private readonly CardFactory _cardFactory;
 
     public Battle(CardFactory cardFactory, Player player)
     {
@@ -16,18 +16,14 @@ public class Battle
         SpawnEnemies();
 
         foreach (var enemy in Enemies)
-        {
             enemy.OnDeath += () =>
             {
                 Enemies.Remove(enemy);
-                
+
                 if (Enemies.Count == 0)
-                {
                     // TODO End battle
                     Debug.Log("Battle is won!");
-                }
             };
-        }
         CreateIntents();
     }
 
@@ -49,7 +45,7 @@ public class Battle
         Player.EndTurn();
         foreach (var enemy in Enemies)
             enemy.OnStartTurn();
-        
+
         PerformEnemyTurns();
         CreateIntents();
         Player.StartTurn();
@@ -88,9 +84,6 @@ public class Battle
     private void CreateIntents()
     {
         // TODO Move to dedicated behaviour class
-        foreach (var enemy in Enemies)
-        {
-            enemy.CreateIntents(_cardFactory);
-        }
+        foreach (var enemy in Enemies) enemy.CreateIntents(_cardFactory);
     }
 }

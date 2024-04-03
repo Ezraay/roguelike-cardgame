@@ -1,18 +1,22 @@
-﻿using System;
-using System.Drawing;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 
 namespace Display
 {
     public class CardDisplay : MonoBehaviour
     {
+        public static Vector2 CardSize = new(4.5f, 6f);
         [SerializeField] private Canvas canvas;
         [SerializeField] private TMP_Text nameText;
         [SerializeField] private TMP_Text costText;
         [SerializeField] private TMP_Text descriptionText;
-        public static Vector2 CardSize = new Vector2(4.5f, 6f);
         public Card Card { get; private set; }
+
+        private void Update()
+        {
+            if (IsMouseOver(Camera.main.ScreenToWorldPoint(Input.mousePosition)))
+                Debug.Log("bbb");
+        }
 
         public void ShowCard(Card card, bool showCost = true)
         {
@@ -26,12 +30,6 @@ namespace Display
         public void SetOrder(int sortingOrder)
         {
             canvas.sortingOrder = sortingOrder;
-        }
-
-        private void Update()
-        {
-            if (IsMouseOver(Camera.main.ScreenToWorldPoint(Input.mousePosition)))
-                Debug.Log("bbb");
         }
 
         public bool IsMouseOver(Vector2 mousePosition)
@@ -52,7 +50,8 @@ namespace Display
             // check if our transformed point is in the rectangle, which is no longer
             // rotated relative to the point
 
-            return newPoint.x >= rect.xMin && newPoint.x <= rect.xMax && newPoint.y >= rect.yMin && newPoint.y <= rect.yMax;
+            return newPoint.x >= rect.xMin && newPoint.x <= rect.xMax && newPoint.y >= rect.yMin &&
+                   newPoint.y <= rect.yMax;
             return rect.Contains(Camera.main.ScreenToWorldPoint(mousePosition));
         }
     }

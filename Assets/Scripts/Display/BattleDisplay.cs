@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-using DrawXXL;
+﻿using DrawXXL;
 using Effects;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Display
 {
@@ -16,7 +14,7 @@ namespace Display
         [SerializeField] private EnergyDisplay energyDisplay;
         private bool _draggedCardActive;
         private CardDisplay _draggedCard;
-        private int _draggedCardIndex;
+        private Vector2 _draggedCardStartPosition;
 
         private void Start()
         {
@@ -24,27 +22,6 @@ namespace Display
             var playerDisplay = Instantiate(entityDisplayPrefab, playerDisplayParent);
             playerDisplay.Show(game.Battle.Player.Entity);
             enemyLayout.Show(game.Battle.Enemies);
-            // var halfOffset = enemyOffset * (game.Battle.Enemies.Count - 1) / 2;
-            // _enemyDisplays.Clear();
-            // for (var i = 0; i < game.Battle.Enemies.Count; i++)
-            // {
-            //     var enemy = game.Battle.Enemies[i];
-            //     Vector3 position = enemyOffset * i - halfOffset;
-            //     var enemyDisplay = Instantiate(entityDisplayPrefab, enemyDisplayParent.position + position,
-            //         Quaternion.identity, enemyDisplayParent);
-            //     enemyDisplay.Show(enemy);
-            //     _enemyDisplays.Add(enemyDisplay);
-            //     
-            //     // Destroy dead enemies
-            //     enemy.OnDeath += () =>
-            //     {
-            //         Destroy(enemyDisplay.gameObject);
-            //         _enemyDisplays.Remove(enemyDisplay);
-            //     };
-            //     
-            //     // Show enemy intents
-            //     enemyDisplay.ShowIntents(game.Battle.Intents[enemy]);
-            // }
 
 
             // Show player cards
@@ -71,75 +48,69 @@ namespace Display
                 if (hit.collider != null)
                 {
                     _draggedCard = hit.collider.GetComponent<CardDisplay>();
-                    _draggedCardIndex = handLayout.GetIndexOf(_draggedCard);
+                    _draggedCardStartPosition = _draggedCard.transform.position;
                     _draggedCardActive = false;
                 }
             }
 
-            if (_draggedCard != null)
+            if (_draggedCard == null) return;
+            if (handLayout.IsMouseOver() && _draggedCardActive) // Dragged card back to hand
             {
-                if (handLayout.IsMouseOver() && _draggedCardActive)
+                _draggedCardActive = false;
+                _draggedCard.gameObject.SetActive(true);
+            }
+            else if (!handLayout.IsMouseOver() && !_draggedCardActive) // Dragged card from hand
+            {
+                _draggedCardActive = true;
+                if (_draggedCard.Card.TargetingType == TargetingType.Enemy)
+                    _draggedCard.gameObject.SetActive(false);
+            }
+
+            var selectedEnemy = enemyLayout.GetHoveredEnemy();
+
+            if (_draggedCardActive && _draggedCard.Card.TargetingType == TargetingType.Enemy)
+            {
+                var startPosition = _draggedCardStartPosition;
+                var endPosition = selectedEnemy != null
+                    ? selectedEnemy.transform.position
+                    : Game.Camera.ScreenToWorldPoint(Input.mousePosition);
+                DrawBasics2D.Vector(startPosition, endPosition);
+            }
+
+            var position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            position.z = 0;
+            _draggedCard.transform.position = position;
+
+            if (Input.GetMouseButtonUp(0) && _draggedCard != null)
+            {
+                var returnCard = true;
+                if (!handLayout.IsMouseOver())
                 {
-                    _draggedCardActive = false;
-                    handLayout.AddCard(_draggedCard, _draggedCardIndex);
+                    var card = _draggedCard.Card;
+                    if (card.TargetingType == TargetingType.Enemy)
+                    {
+                        if (selectedEnemy != null && game.Battle.UseCard(card, selectedEnemy.Entity))
+                            returnCard = false;
+                    }
+                    else if (game.Battle.UseCard(card, game.Battle.Player.Entity))
+                    {
+                        returnCard = false;
+                    }
+                }
+
+
+                if (returnCard)
+                {
                     _draggedCard.gameObject.SetActive(true);
                 }
-                else if (!handLayout.IsMouseOver() && !_draggedCardActive)
+                else
                 {
-                    _draggedCardActive = true;
                     handLayout.RemoveCard(_draggedCard);
-
-                    if (_draggedCard.Card.TargetingType == TargetingType.Enemy)
-                        _draggedCard.gameObject.SetActive(false);
+                    Destroy(_draggedCard.gameObject);
                 }
 
-                var selectedEnemy = enemyLayout.GetHoveredEnemy();
-
-                if (_draggedCardActive && _draggedCard.Card.TargetingType == TargetingType.Enemy)
-                {
-                    if (selectedEnemy != null)
-                        DrawBasics2D.Vector(handLayout.transform.position, selectedEnemy.transform.position);
-                    else
-                        DrawBasics2D.Vector(handLayout.transform.position,
-                            Camera.main.ScreenToWorldPoint(Input.mousePosition));
-                }
-
-                var position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                position.z = 0;
-                _draggedCard.transform.position = position;
-
-                if (Input.GetMouseButtonUp(0) && _draggedCard != null)
-                {
-                    var returnCard = true;
-                    if (!handLayout.IsMouseOver())
-                    {
-                        var card = _draggedCard.Card;
-                        if (card.TargetingType == TargetingType.Enemy)
-                        {
-                            if (selectedEnemy != null && game.Battle.UseCard(card, selectedEnemy.Entity))
-                                returnCard = false;
-                        }
-                        else if (game.Battle.UseCard(card, game.Battle.Player.Entity))
-                        {
-                            returnCard = false;
-                        }
-                    }
-
-
-                    if (returnCard)
-                    {
-                        if (_draggedCardActive)
-                            handLayout.AddCard(_draggedCard, _draggedCardIndex);
-                        _draggedCard.gameObject.SetActive(true);
-                    }
-                    else
-                    {
-                        Destroy(_draggedCard.gameObject);
-                    }
-
-                    _draggedCard = null;
-                    handLayout.RepositionCards();
-                }
+                _draggedCard = null;
+                handLayout.RepositionCards();
             }
         }
 
@@ -149,12 +120,6 @@ namespace Display
             game.Battle.EndTurn();
             handLayout.Show(game.Battle.Player.Hand);
             enemyLayout.UpdateIntents(game.Battle.Enemies);
-            // for (var i = 0; i < game.Battle.Enemies.Count; i++)
-            // {
-            //     var enemy = game.Battle.Enemies[i];
-            //     var intents = game.Battle.Intents[enemy];
-            //     _enemyDisplays[i].ShowIntents(intents);
-            // }
         }
     }
 }

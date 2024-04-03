@@ -8,8 +8,7 @@ public class Card
     public readonly string Name;
     public readonly string Id;
     public readonly TargetingType TargetingType;
-    
-    
+
 
     public Card(string name, string id, TargetingType targetingType, int energyCost, IEffect[] effects)
     {
