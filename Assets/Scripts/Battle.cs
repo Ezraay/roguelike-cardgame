@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class Battle
 {
-    public readonly Dictionary<Entity, List<Card>> Intents = new();
-    public readonly List<Entity> Enemies = new();
+    public readonly List<Enemy> Enemies = new();
     public readonly Player Player;
     private readonly CardFactory _cardFactory;
 
@@ -18,15 +17,14 @@ public class Battle
 
         foreach (var enemy in Enemies)
         {
-            Intents.Add(enemy, new List<Card>());
             enemy.OnDeath += () =>
             {
                 Enemies.Remove(enemy);
-                Intents.Remove(enemy);
                 
                 if (Enemies.Count == 0)
                 {
                     // TODO End battle
+                    Debug.Log("Battle is won!");
                 }
             };
         }
@@ -61,7 +59,7 @@ public class Battle
     {
         foreach (var enemy in Enemies)
         {
-            var intent = Intents[enemy];
+            var intent = enemy.GetIntents();
             foreach (var card in intent) PerformCard(card, enemy, Player.Entity);
         }
 
@@ -83,18 +81,16 @@ public class Battle
     private void SpawnEnemies()
     {
         // TODO Move to dedicated behaviour class
-        Enemies.Add(new Entity(20));
-        Enemies.Add(new Entity(15));
+        Enemies.Add(new Enemy(20));
+        Enemies.Add(new Enemy(15));
     }
 
     private void CreateIntents()
     {
         // TODO Move to dedicated behaviour class
-        foreach (var intent in Intents.Values)
+        foreach (var enemy in Enemies)
         {
-            intent.Clear();
-            intent.Add(Random.value < 0.5f
-                ? _cardFactory.CreateCard("strike") : _cardFactory.CreateCard("defend"));
+            enemy.CreateIntents(_cardFactory);
         }
     }
 }

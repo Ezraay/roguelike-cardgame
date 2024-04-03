@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Display
 {
-    public class HandDisplay : MonoBehaviour
+    public class CardLayout : MonoBehaviour
     {
         [SerializeField] private CardDisplay cardDisplayPrefab;
         [SerializeField] private Transform cardParent;

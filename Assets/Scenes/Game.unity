@@ -998,6 +998,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1309165209}
+  - component: {fileID: 1309165210}
   m_Layer: 0
   m_Name: Enemies
   m_TagString: Untagged
@@ -1020,6 +1021,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1850668324}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1309165210
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1309165208}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2fd1f9d11f8f497aaea1da1cff863e3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  entityDisplayPrefab: {fileID: 7229330853577003084, guid: 536c2416b47d3684dab0566e6a895bf5, type: 3}
+  enemyOffset: {x: 7, y: 0}
 --- !u!1 &1850668322
 GameObject:
   m_ObjectHideFlags: 0
@@ -1051,10 +1066,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   game: {fileID: 410981338}
   entityDisplayPrefab: {fileID: 7229330853577003084, guid: 536c2416b47d3684dab0566e6a895bf5, type: 3}
-  enemyOffset: {x: 7, y: 0}
   playerDisplayParent: {fileID: 900952958}
-  enemyDisplayParent: {fileID: 1309165209}
-  handDisplay: {fileID: 780728302}
+  enemyLayout: {fileID: 1309165210}
+  handLayout: {fileID: 780728302}
   energyDisplay: {fileID: 839765270}
 --- !u!4 &1850668324
 Transform:

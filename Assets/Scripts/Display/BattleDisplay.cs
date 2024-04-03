@@ -2,6 +2,7 @@
 using DrawXXL;
 using Effects;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Display
 {
@@ -9,14 +10,12 @@ namespace Display
     {
         [SerializeField] private Game game;
         [SerializeField] private EntityDisplay entityDisplayPrefab;
-        [SerializeField] private Vector2 enemyOffset;
         [SerializeField] private Transform playerDisplayParent;
-        [SerializeField] private Transform enemyDisplayParent;
-        [SerializeField] private HandDisplay handDisplay;
+        [SerializeField] private EnemyLayout enemyLayout;
+        [SerializeField] private CardLayout handLayout;
         [SerializeField] private EnergyDisplay energyDisplay;
         private bool _draggedCardActive;
         private CardDisplay _draggedCard;
-        private List<EntityDisplay> _enemyDisplays = new();
         private int _draggedCardIndex;
 
         private void Start()
@@ -24,32 +23,32 @@ namespace Display
             // Show player and enemy health
             var playerDisplay = Instantiate(entityDisplayPrefab, playerDisplayParent);
             playerDisplay.Show(game.Battle.Player.Entity);
-
-            var halfOffset = enemyOffset * (game.Battle.Enemies.Count - 1) / 2;
-            _enemyDisplays.Clear();
-            for (var i = 0; i < game.Battle.Enemies.Count; i++)
-            {
-                var enemy = game.Battle.Enemies[i];
-                Vector3 position = enemyOffset * i - halfOffset;
-                var enemyDisplay = Instantiate(entityDisplayPrefab, enemyDisplayParent.position + position,
-                    Quaternion.identity, enemyDisplayParent);
-                enemyDisplay.Show(enemy);
-                _enemyDisplays.Add(enemyDisplay);
-                
-                // Destroy dead enemies
-                enemy.OnDeath += () =>
-                {
-                    Destroy(enemyDisplay.gameObject);
-                    _enemyDisplays.Remove(enemyDisplay);
-                };
-                
-                // Show enemy intents
-                enemyDisplay.ShowIntents(game.Battle.Intents[enemy]);
-            }
+            enemyLayout.Show(game.Battle.Enemies);
+            // var halfOffset = enemyOffset * (game.Battle.Enemies.Count - 1) / 2;
+            // _enemyDisplays.Clear();
+            // for (var i = 0; i < game.Battle.Enemies.Count; i++)
+            // {
+            //     var enemy = game.Battle.Enemies[i];
+            //     Vector3 position = enemyOffset * i - halfOffset;
+            //     var enemyDisplay = Instantiate(entityDisplayPrefab, enemyDisplayParent.position + position,
+            //         Quaternion.identity, enemyDisplayParent);
+            //     enemyDisplay.Show(enemy);
+            //     _enemyDisplays.Add(enemyDisplay);
+            //     
+            //     // Destroy dead enemies
+            //     enemy.OnDeath += () =>
+            //     {
+            //         Destroy(enemyDisplay.gameObject);
+            //         _enemyDisplays.Remove(enemyDisplay);
+            //     };
+            //     
+            //     // Show enemy intents
+            //     enemyDisplay.ShowIntents(game.Battle.Intents[enemy]);
+            // }
 
 
             // Show player cards
-            handDisplay.Show(game.Battle.Player.Hand);
+            handLayout.Show(game.Battle.Player.Hand);
 
             // TODO Show player deck and discard
 
@@ -72,43 +71,36 @@ namespace Display
                 if (hit.collider != null)
                 {
                     _draggedCard = hit.collider.GetComponent<CardDisplay>();
-                    _draggedCardIndex = handDisplay.GetIndexOf(_draggedCard);
+                    _draggedCardIndex = handLayout.GetIndexOf(_draggedCard);
                     _draggedCardActive = false;
                 }
             }
 
             if (_draggedCard != null)
             {
-                if (handDisplay.IsMouseOver() && _draggedCardActive)
+                if (handLayout.IsMouseOver() && _draggedCardActive)
                 {
                     _draggedCardActive = false;
-                    handDisplay.AddCard(_draggedCard, _draggedCardIndex);
+                    handLayout.AddCard(_draggedCard, _draggedCardIndex);
                     _draggedCard.gameObject.SetActive(true);
                 }
-                else if (!handDisplay.IsMouseOver() && !_draggedCardActive)
+                else if (!handLayout.IsMouseOver() && !_draggedCardActive)
                 {
                     _draggedCardActive = true;
-                    handDisplay.RemoveCard(_draggedCard);
+                    handLayout.RemoveCard(_draggedCard);
 
                     if (_draggedCard.Card.TargetingType == TargetingType.Enemy)
                         _draggedCard.gameObject.SetActive(false);
                 }
 
-                EntityDisplay selectedEnemy = null;
-                if (_draggedCard.Card.TargetingType == TargetingType.Enemy)
-                    foreach (var enemyDisplay in _enemyDisplays)
-                        if (enemyDisplay.IsMouseOver())
-                        {
-                            selectedEnemy = enemyDisplay;
-                            break;
-                        }
+                var selectedEnemy = enemyLayout.GetHoveredEnemy();
 
                 if (_draggedCardActive && _draggedCard.Card.TargetingType == TargetingType.Enemy)
                 {
                     if (selectedEnemy != null)
-                        DrawBasics2D.Vector(handDisplay.transform.position, selectedEnemy.transform.position);
+                        DrawBasics2D.Vector(handLayout.transform.position, selectedEnemy.transform.position);
                     else
-                        DrawBasics2D.Vector(handDisplay.transform.position,
+                        DrawBasics2D.Vector(handLayout.transform.position,
                             Camera.main.ScreenToWorldPoint(Input.mousePosition));
                 }
 
@@ -119,7 +111,7 @@ namespace Display
                 if (Input.GetMouseButtonUp(0) && _draggedCard != null)
                 {
                     var returnCard = true;
-                    if (!handDisplay.IsMouseOver())
+                    if (!handLayout.IsMouseOver())
                     {
                         var card = _draggedCard.Card;
                         if (card.TargetingType == TargetingType.Enemy)
@@ -137,7 +129,7 @@ namespace Display
                     if (returnCard)
                     {
                         if (_draggedCardActive)
-                            handDisplay.AddCard(_draggedCard, _draggedCardIndex);
+                            handLayout.AddCard(_draggedCard, _draggedCardIndex);
                         _draggedCard.gameObject.SetActive(true);
                     }
                     else
@@ -146,7 +138,7 @@ namespace Display
                     }
 
                     _draggedCard = null;
-                    handDisplay.RepositionCards();
+                    handLayout.RepositionCards();
                 }
             }
         }
@@ -155,13 +147,14 @@ namespace Display
         {
             // Allow player to end turn
             game.Battle.EndTurn();
-            handDisplay.Show(game.Battle.Player.Hand);
-            for (var i = 0; i < game.Battle.Enemies.Count; i++)
-            {
-                var enemy = game.Battle.Enemies[i];
-                var intents = game.Battle.Intents[enemy];
-                _enemyDisplays[i].ShowIntents(intents);
-            }
+            handLayout.Show(game.Battle.Player.Hand);
+            enemyLayout.UpdateIntents(game.Battle.Enemies);
+            // for (var i = 0; i < game.Battle.Enemies.Count; i++)
+            // {
+            //     var enemy = game.Battle.Enemies[i];
+            //     var intents = game.Battle.Intents[enemy];
+            //     _enemyDisplays[i].ShowIntents(intents);
+            // }
         }
     }
 }
