@@ -16,7 +16,7 @@ public class Player
     }
 
     public int Energy { get; private set; }
-    public int EnergyPerTurn { get; } = 3;
+    public int EnergyPerTurn => 3;
 
     public void StartTurn()
     {

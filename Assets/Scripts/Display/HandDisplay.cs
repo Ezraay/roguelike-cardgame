@@ -83,8 +83,8 @@ namespace Display
             }
 
             // Calculate size of the container
-            var containerWidth = cardSpacing.x * spacingFactor + CardSize.x * cardCount;
-            var containerHeight = CardSize.y;
+            var containerWidth = cardSpacing.x * spacingFactor + CardSize.x * (cardCount-1) * cardSizeMultiplier.x + CardSize.x;
+            var containerHeight = cardSpacing.y * spacingFactor + CardSize.y;
             var containerPosition = (Vector2)transform.position - halfOffset - CardSize / 2 - padding;
             _size = new Rect(containerPosition.x, containerPosition.y, containerWidth + padding.x * 2, containerHeight + padding.y * 2);
         }

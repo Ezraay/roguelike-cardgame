@@ -6,11 +6,15 @@ public class Card
     private readonly IEffect[] _effects;
     public readonly int EnergyCost;
     public readonly string Name;
+    public readonly string Id;
     public readonly TargetingType TargetingType;
+    
+    
 
-    public Card(string name, TargetingType targetingType, int energyCost, IEffect[] effects)
+    public Card(string name, string id, TargetingType targetingType, int energyCost, IEffect[] effects)
     {
         Name = name;
+        Id = id;
         TargetingType = targetingType;
         EnergyCost = energyCost;
         _effects = effects;

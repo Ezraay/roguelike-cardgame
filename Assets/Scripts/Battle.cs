@@ -7,23 +7,13 @@ public class Battle
     public readonly Dictionary<Entity, List<Card>> Intents = new();
     public readonly List<Entity> Enemies = new();
     public readonly Player Player;
+    private readonly CardFactory _cardFactory;
 
-    public Battle()
+    public Battle(CardFactory cardFactory, Player player)
     {
-        Player = new Player(100, new List<Card>
-        {
-            new("Strike", TargetingType.Enemy, 1, new IEffect[] { new DealDamage(6) }),
-            new("Strike", TargetingType.Enemy, 1, new IEffect[] { new DealDamage(6) }),
-            new("Strike", TargetingType.Enemy, 1, new IEffect[] { new DealDamage(6) }),
-            new("Strike", TargetingType.Enemy, 1, new IEffect[] { new DealDamage(6) }),
-            new("Strike", TargetingType.Enemy, 1, new IEffect[] { new DealDamage(6) }),
-            new("Defend", TargetingType.Self, 1, new IEffect[] { new AddBlock(5) }),
-            new("Defend", TargetingType.Self, 1, new IEffect[] { new AddBlock(5) }),
-            new("Defend", TargetingType.Self, 1, new IEffect[] { new AddBlock(5) }),
-            new("Defend", TargetingType.Self, 1, new IEffect[] { new AddBlock(5) }),
-            new("Defend", TargetingType.Self, 1, new IEffect[] { new AddBlock(5) })
-        });
-        
+        _cardFactory = cardFactory;
+        Player = player;
+
         SpawnEnemies();
 
         foreach (var enemy in Enemies)
@@ -33,6 +23,11 @@ public class Battle
             {
                 Enemies.Remove(enemy);
                 Intents.Remove(enemy);
+                
+                if (Enemies.Count == 0)
+                {
+                    // TODO End battle
+                }
             };
         }
         CreateIntents();
@@ -45,9 +40,8 @@ public class Battle
 
     public bool UseCard(Card card, Entity target)
     {
-        var cost = 1;
-        if (Player.Energy < cost) return false;
-        Player.UseEnergy(cost);
+        if (Player.Energy < card.EnergyCost) return false;
+        Player.UseEnergy(card.EnergyCost);
         PerformCard(card, Player.Entity, target);
         return true;
     }
@@ -100,8 +94,7 @@ public class Battle
         {
             intent.Clear();
             intent.Add(Random.value < 0.5f
-                ? new Card("Strike", TargetingType.RandomAlly, 1, new IEffect[] { new DealDamage(6) })
-                : new Card("Defend", TargetingType.Self, 1, new IEffect[] { new AddBlock(5) }));
+                ? _cardFactory.CreateCard("strike") : _cardFactory.CreateCard("defend"));
         }
     }
 }

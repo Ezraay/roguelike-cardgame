@@ -1,13 +1,10 @@
-﻿namespace Effects
+﻿using UnityEngine;
+
+namespace Effects
 {
     public class AddBlock : IEffect
     {
-        public AddBlock(int block)
-        {
-            _block = block;
-        }
-
-        private readonly int _block;
+        [SerializeField] private readonly int _block;
 
         public void Perform(Entity author, Entity target)
         {
