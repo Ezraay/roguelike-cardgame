@@ -4,15 +4,17 @@ using UnityEngine;
 public class Player
 {
     public readonly Entity Entity;
-    public readonly List<Card> Deck = new();
+    public List<Card> Pile;
     public readonly List<Card> Discard = new();
     public readonly List<Card> Hand = new();
+    private readonly Deck _deck;
 
-    public Player(int health, List<Card> deck)
+    public Player(int health, Deck deck)
     {
+        _deck = deck;
         Entity = new Entity(health);
-        Deck.AddRange(deck);
-        Shuffle(Deck);
+        Pile = deck.CreatePile();
+        Shuffle(Pile);
     }
 
     public int Energy { get; private set; }
@@ -36,20 +38,20 @@ public class Player
 
     public void DrawCard()
     {
-        if (Deck.Count == 0)
+        if (Pile.Count == 0)
         {
             // Shuffle discard into deck
-            Deck.AddRange(Discard);
-            Shuffle(Deck);
+            Pile.AddRange(Discard);
+            Shuffle(Pile);
             Discard.Clear();
         }
 
-        if (Deck.Count == 0)
+        if (Pile.Count == 0)
             // No cards to draw
             return;
 
-        var card = Deck[0];
-        Deck.RemoveAt(0);
+        var card = Pile[0];
+        Pile.RemoveAt(0);
         Hand.Add(card);
     }
 
@@ -66,5 +68,12 @@ public class Player
             var j = Random.Range(0, i + 1);
             (cards[i], cards[j]) = (cards[j], cards[i]);
         }
+    }
+
+    public void Reset()
+    {
+        Pile = _deck.CreatePile();
+        Hand.Clear();
+        Discard.Clear();
     }
 }

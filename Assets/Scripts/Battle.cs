@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Effects;
 using UnityEngine;
 
@@ -7,13 +8,23 @@ public class Battle
     private readonly CardFactory _cardFactory;
     public readonly List<Enemy> Enemies = new();
     public readonly Player Player;
+    public event Action OnStartEncounter;
 
     public Battle(CardFactory cardFactory, Player player)
     {
         _cardFactory = cardFactory;
         Player = player;
 
-        SpawnEnemies();
+    }
+
+    public void Start(Level level)
+    {
+        StartEncounter(level);
+    }
+
+    private void StartEncounter(Level level)
+    {
+        SpawnEnemies(level.CurrentEncounter);
 
         foreach (var enemy in Enemies)
             enemy.OnDeath += () =>
@@ -21,15 +32,26 @@ public class Battle
                 Enemies.Remove(enemy);
 
                 if (Enemies.Count == 0)
-                    // TODO End battle
-                    Debug.Log("Battle is won!");
+                {
+                    // TODO End encounter
+                    Debug.Log("Encounter is won!");
+                    if (level.CanAdvance())
+                    {
+                        level.Advance();
+                        StartEncounter(level);
+                    }
+                    else
+                    {
+                        // TODO End level
+                        Debug.Log("Level is won!");
+                    }
+                }
             };
         CreateIntents();
-    }
 
-    public void Start()
-    {
+        Player.Reset();
         Player.StartTurn();
+        OnStartEncounter?.Invoke();
     }
 
     public bool UseCard(Card card, Entity target)
@@ -74,11 +96,9 @@ public class Battle
         card.Use(author, target);
     }
 
-    private void SpawnEnemies()
+    private void SpawnEnemies(Encounter encounter)
     {
-        // TODO Move to dedicated behaviour class
-        Enemies.Add(new Enemy(20));
-        Enemies.Add(new Enemy(15));
+        Enemies.AddRange(encounter.GetEnemies());
     }
 
     private void CreateIntents()

@@ -16,7 +16,12 @@ namespace Display
         private CardDisplay _draggedCard;
         private Vector2 _draggedCardStartPosition;
 
-        private void Start()
+        private void Awake()
+        {
+            game.Battle.OnStartEncounter += StartEncounter;
+        }
+
+        private void StartEncounter()
         {
             // Show player and enemy health
             var playerDisplay = Instantiate(entityDisplayPrefab, playerDisplayParent);
@@ -43,7 +48,7 @@ namespace Display
             if (Input.GetMouseButtonDown(0))
             {
                 // Raycast for card
-                var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                var ray = Game.Camera.ScreenPointToRay(Input.mousePosition);
                 var hit = Physics2D.Raycast(ray.origin, ray.direction);
                 if (hit.collider != null)
                 {
@@ -77,7 +82,7 @@ namespace Display
                 DrawBasics2D.Vector(startPosition, endPosition);
             }
 
-            var position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            var position = Game.Camera.ScreenToWorldPoint(Input.mousePosition);
             position.z = 0;
             _draggedCard.transform.position = position;
 

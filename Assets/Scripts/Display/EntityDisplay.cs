@@ -50,7 +50,7 @@ namespace Display
 
         public bool IsMouseOver()
         {
-            return _rect.Contains(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+            return _rect.Contains(Game.Camera.ScreenToWorldPoint(Input.mousePosition));
         }
     }
 }

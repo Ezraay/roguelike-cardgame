@@ -94,7 +94,7 @@ namespace Display
         public bool IsMouseOver()
         {
             var mouse = Input.mousePosition;
-            var worldMouse = Camera.main.ScreenToWorldPoint(mouse);
+            var worldMouse = Game.Camera.ScreenToWorldPoint(mouse);
             return _size.Contains(worldMouse);
         }
     }
