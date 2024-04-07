@@ -4,6 +4,7 @@
     {
         Self,
         Enemy,
+        AllEnemies,
         RandomAlly
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Display
 {
-    public class TargettingArrow : MonoBehaviour
+    public class TargetingArrow : MonoBehaviour
     {
         [SerializeField] private LineRenderer lineRenderer;
 

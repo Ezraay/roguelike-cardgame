@@ -16,9 +16,14 @@ namespace Effects
             target.AddBlock(_block);
         }
 
-        public string GetDescription(Entity author)
+        public string GetDescription(Entity author, TargetingType targetingType)
         {
-            return $"Gain {_block} block.";
+            switch (targetingType)
+            {
+                case TargetingType.Self:
+                default:
+                    return $"Gain {_block} block. ";
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace BattleSystem
 {
@@ -14,6 +15,12 @@ namespace BattleSystem
         public Card CreateCard(string id)
         {
             return _cardBlueprints[id].CreateCard();
+        }
+
+        public List<Card> GetSearch(string query = "")
+        {
+            return _cardBlueprints.Values.Where(cardBlueprint => cardBlueprint.Name.Contains(query))
+                .Select(cardBlueprint => cardBlueprint.CreateCard()).ToList();
         }
     }
 }

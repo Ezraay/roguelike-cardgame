@@ -1,6 +1,7 @@
 ﻿using BattleSystem;
 using Effects;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Display
 {
@@ -12,7 +13,7 @@ namespace Display
         [SerializeField] private EnemyLayout enemyLayout;
         [SerializeField] private CardLayout handLayout;
         [SerializeField] private EnergyDisplay energyDisplay;
-        [SerializeField] private TargettingArrow targettingArrow;
+        [FormerlySerializedAs("targettingArrow"),SerializeField] private TargetingArrow targetingArrow;
         [SerializeField] private EncounterRewardsWindow encounterRewardsWindow;
         private bool _draggedCardActive;
         private CardDisplay _draggedCard;
@@ -75,7 +76,7 @@ namespace Display
 
             _draggedCard = null;
             handLayout.RepositionCards();
-            targettingArrow.Hide();
+            targetingArrow.Hide();
         }
 
         private bool TryUseCard(Entity selectedEnemy)
@@ -104,11 +105,11 @@ namespace Display
                 var endPosition = selectedEnemy != null
                     ? selectedEnemy.transform.position
                     : mousePosition;
-                targettingArrow.Show(startPosition, endPosition);
+                targetingArrow.Show(startPosition, endPosition);
             }
             else
             {
-                targettingArrow.Hide();
+                targetingArrow.Hide();
             }
 
             _draggedCard.transform.position = mousePosition;

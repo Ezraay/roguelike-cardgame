@@ -10,5 +10,10 @@ namespace MainMenu
             var level = new Level(new Encounter(new Encounter())); // TODO Move to level selection
             BattleStart.LoadBattleScene(GlobalState.GetDeck(), level);
         }
+
+        public void LoadDeckBuilder()
+        {
+            DeckBuilderStart.LoadDeckBuilder();
+        }
     }
 }

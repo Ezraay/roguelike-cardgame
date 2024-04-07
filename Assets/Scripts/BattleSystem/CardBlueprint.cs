@@ -4,6 +4,7 @@ namespace BattleSystem
 {
     public class CardBlueprint
     {
+        public string Name => _name;
         private readonly IEffect[] _effects;
         private readonly int _energyCost;
         private readonly string _name;

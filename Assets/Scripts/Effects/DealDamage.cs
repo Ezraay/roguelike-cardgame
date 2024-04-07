@@ -16,9 +16,16 @@ namespace Effects
             target.TakeDamage(_damage);
         }
 
-        public string GetDescription(Entity author)
+        public string GetDescription(Entity author, TargetingType targetingType)
         {
-            return $"Deal {_damage} damage.";
+            switch (targetingType)
+            {
+                case TargetingType.AllEnemies:
+                    return $"Deal {_damage} damage to all enemies. ";
+                case TargetingType.Enemy:
+                default:
+                    return $"Deal {_damage} damage. ";
+            }
         }
     }
 }

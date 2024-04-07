@@ -40,7 +40,14 @@ namespace BattleSystem
 
         public string GetDescription()
         {
-            return string.Join(Environment.NewLine, Array.ConvertAll(_effects, effect => effect.GetDescription(null)));
+            var description = "";
+            foreach (var effect in _effects)
+            {
+                var line = effect.GetDescription(null, TargetingType);
+                description += line;
+            }
+            return description;
+            // return string.Join(Environment.NewLine, Array.ConvertAll(_effects, effect => effect.GetDescription(null, TODO)));
         }
     }
 }

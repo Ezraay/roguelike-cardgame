@@ -1,6 +1,7 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using BattleSystem;
 using DrawXXL;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Display
@@ -10,13 +11,13 @@ namespace Display
         [SerializeField] private CardDisplay cardDisplayPrefab;
         [SerializeField] private Transform cardParent;
 
-        [SerializeField] private int sortingOrder;
-        [SerializeField] private Vector2 cardSpacing;
-        [SerializeField] private Vector2 padding;
-        [SerializeField] private Vector2 cardSizeMultiplier;
-        [SerializeField] private Vector2 middleCardOffset;
-
-        [SerializeField] private float cardRotation;
+        [OnValueChanged("RepositionCards"), SerializeField] private int sortingOrder;
+        [OnValueChanged("RepositionCards"), SerializeField] private Vector2 cardSpacing = new(0.15f, 0);
+        [OnValueChanged("RepositionCards"), SerializeField] private Vector2 padding = new(2, 0);
+        [OnValueChanged("RepositionCards"), SerializeField] private Vector2 middleCardOffset = new(0, -0.1f);
+        [OnValueChanged("RepositionCards"), SerializeField] private float cardRotation = -2;
+        [OnValueChanged("RepositionCards"), SerializeField] private bool wrapCards;
+        [OnValueChanged("RepositionCards"), SerializeField, ShowIf("wrapCards")] private int columnCount = 3;
 
         private readonly List<CardDisplay> _cardDisplays = new();
         private Rect _size;
@@ -63,33 +64,43 @@ namespace Display
             RepositionCards();
         }
 
+        [Button]
         public void RepositionCards()
         {
             // Calculate half offset for positioning cards
             var cardCount = _cardDisplays.Count;
-            var spacingFactor = 2 * (cardCount - 1);
-            var cardSpacingTotal = cardSpacing * spacingFactor;
-            var cardSizeTotal = CardSize * cardSizeMultiplier * (cardCount - 1);
-            var halfOffset = (cardSpacingTotal + cardSizeTotal) / 2;
-            var halfRotation = cardRotation * (cardCount - 1) / 2;
+            var columns = wrapCards ? columnCount : cardCount;
+            var rows = Mathf.Ceil((float)cardCount / columns);
+            var gridSize = new Vector2(columns, rows);
+            var spacingFactor = 2 * (gridSize - Vector2.one);
+            var halfRotation = cardRotation * (columnCount - 1) / 2;
 
             // Position each card
-            for (var i = 0; i < cardCount; i++)
+            for (var row = 0; row < rows; row++)
             {
-                var cardDisplay = _cardDisplays[i];
-                var position = (cardSpacing * 2 + CardSize * cardSizeMultiplier) * i - halfOffset +
-                               middleCardOffset * Mathf.Pow(Mathf.Abs(i - (cardCount - 1) / 2f), 2);
-                cardDisplay.transform.localPosition = position;
-                cardDisplay.transform.rotation = Quaternion.Euler(0, 0, cardRotation * i - halfRotation);
+                var cardSpacingTotal = cardSpacing * spacingFactor;
+                var cardsThisRow = Mathf.Min(columns, cardCount - row * columns);
+                var cardSizeTotal = CardSize * (new Vector2(cardsThisRow, gridSize.y) - Vector2.one);
+                var halfOffset = (cardSpacingTotal + cardSizeTotal) / 2;
+                for (var column = 0; column < columns; column++)
+                {
+                    var cardIndex = column + row * columns;
+                    if (cardIndex >= cardCount) break;
+                    var cardDisplay = _cardDisplays[cardIndex];
+                    var cardPosition = new Vector2(column, rows - row - 1);
+                    var position = (cardSpacing * 2 + CardSize) * cardPosition
+                                   - halfOffset
+                                   + middleCardOffset * Mathf.Pow(Mathf.Abs(column - (cardsThisRow - 1) / 2f), 2);
+                    cardDisplay.transform.localPosition = position;
+                    cardDisplay.transform.rotation = Quaternion.Euler(0, 0, cardRotation * column - halfRotation);
+                    cardDisplay.SetOrder(cardIndex);
+                }
             }
 
             // Calculate size of the container
-            var containerWidth = cardSpacing.x * spacingFactor + CardSize.x * (cardCount - 1) * cardSizeMultiplier.x +
-                                 CardSize.x;
-            var containerHeight = cardSpacing.y * spacingFactor + CardSize.y;
-            var containerPosition = (Vector2)transform.position - halfOffset - CardSize / 2 - padding;
-            _size = new Rect(containerPosition.x, containerPosition.y, containerWidth + padding.x * 2,
-                containerHeight + padding.y * 2);
+            var size = cardSpacing * spacingFactor + CardSize * gridSize + padding * 2;
+            var containerPosition = (Vector2)transform.position - size / 2;
+            _size = new Rect(containerPosition.x, containerPosition.y, size.x, size.y);
         }
 
         public bool IsMouseOver()
