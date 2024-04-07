@@ -1,20 +1,23 @@
 ﻿using System;
 using UnityEngine;
 
-public class EncounterRewardsWindow : MonoBehaviour
+namespace Display
 {
-    [SerializeField] private GameObject content;
-    public event Action OnClose;
+    public class EncounterRewardsWindow : MonoBehaviour
+    {
+        [SerializeField] private GameObject content;
+        public event Action OnClose;
     
-    public void Show()
-    {
-        // TODO Actual rewards
-        content.SetActive(true);
-    }
+        public void Show()
+        {
+            // TODO Actual rewards
+            content.SetActive(true);
+        }
 
-    public void Hide()
-    {
-        content.SetActive(false);
-        OnClose?.Invoke();
+        public void Hide()
+        {
+            content.SetActive(false);
+            OnClose?.Invoke();
+        }
     }
 }

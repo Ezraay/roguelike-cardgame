@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using BattleSystem;
+using TMPro;
 using UnityEngine;
 
 namespace Display

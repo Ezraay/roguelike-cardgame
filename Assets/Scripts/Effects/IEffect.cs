@@ -1,4 +1,6 @@
-﻿namespace Effects
+﻿using BattleSystem;
+
+namespace Effects
 {
     public interface IEffect
     {

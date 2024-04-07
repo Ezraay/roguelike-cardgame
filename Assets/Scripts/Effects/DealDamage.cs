@@ -1,10 +1,15 @@
-﻿using UnityEngine;
+﻿using BattleSystem;
 
 namespace Effects
 {
     public class DealDamage : IEffect
     {
-        [SerializeField] private readonly int _damage;
+        private readonly int _damage;
+
+        public DealDamage(int damage)
+        {
+            _damage = damage;
+        }
 
         public void Perform(Entity author, Entity target)
         {

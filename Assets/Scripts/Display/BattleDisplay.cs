@@ -1,4 +1,5 @@
-﻿using Effects;
+﻿using BattleSystem;
+using Effects;
 using UnityEngine;
 
 namespace Display
@@ -19,8 +20,8 @@ namespace Display
 
         private void Awake()
         {
-            game.Battle.OnStartEncounter += StartEncounter;
-            game.Battle.OnEndEncounter += EndEncounter;
+            game.OnStartEncounter += StartEncounter;
+            game.OnEndEncounter += EndEncounter;
 
             encounterRewardsWindow.OnClose += game.StartNextEncounter;
         }

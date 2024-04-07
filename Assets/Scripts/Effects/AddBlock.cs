@@ -1,10 +1,15 @@
-﻿using UnityEngine;
+﻿using BattleSystem;
 
 namespace Effects
 {
     public class AddBlock : IEffect
     {
-        [SerializeField] private readonly int _block;
+        private readonly int _block;
+
+        public AddBlock(int block)
+        {
+            _block = block;
+        }
 
         public void Perform(Entity author, Entity target)
         {
