@@ -1,5 +1,4 @@
-﻿using DrawXXL;
-using Effects;
+﻿using Effects;
 using UnityEngine;
 
 namespace Display
@@ -12,6 +11,7 @@ namespace Display
         [SerializeField] private EnemyLayout enemyLayout;
         [SerializeField] private CardLayout handLayout;
         [SerializeField] private EnergyDisplay energyDisplay;
+        [SerializeField] private TargettingArrow targettingArrow;
         private bool _draggedCardActive;
         private CardDisplay _draggedCard;
         private Vector2 _draggedCardStartPosition;
@@ -19,28 +19,6 @@ namespace Display
         private void Awake()
         {
             game.Battle.OnStartEncounter += StartEncounter;
-        }
-
-        private void StartEncounter()
-        {
-            // Show player and enemy health
-            var playerDisplay = Instantiate(entityDisplayPrefab, playerDisplayParent);
-            playerDisplay.Show(game.Battle.Player.Entity);
-            enemyLayout.Show(game.Battle.Enemies);
-
-
-            // Show player cards
-            handLayout.Show(game.Battle.Player.Hand);
-
-            // TODO Show player deck and discard
-
-            // Show player energy
-            energyDisplay.Show(game.Battle.Player);
-
-            // TODO Show animated card actions
-
-
-            // TODO Game over screen
         }
 
         private void Update()
@@ -79,7 +57,12 @@ namespace Display
                 var endPosition = selectedEnemy != null
                     ? selectedEnemy.transform.position
                     : Game.Camera.ScreenToWorldPoint(Input.mousePosition);
-                DrawBasics2D.Vector(startPosition, endPosition);
+                // DrawBasics2D.Vector(startPosition, endPosition);
+                targettingArrow.Show(startPosition, endPosition);
+            }
+            else
+            {
+                targettingArrow.Hide();
             }
 
             var position = Game.Camera.ScreenToWorldPoint(Input.mousePosition);
@@ -116,7 +99,30 @@ namespace Display
 
                 _draggedCard = null;
                 handLayout.RepositionCards();
+                targettingArrow.Hide();
             }
+        }
+
+        private void StartEncounter()
+        {
+            // Show player and enemy health
+            var playerDisplay = Instantiate(entityDisplayPrefab, playerDisplayParent);
+            playerDisplay.Show(game.Battle.Player.Entity);
+            enemyLayout.Show(game.Battle.Enemies);
+
+
+            // Show player cards
+            handLayout.Show(game.Battle.Player.Hand);
+
+            // TODO Show player deck and discard
+
+            // Show player energy
+            energyDisplay.Show(game.Battle.Player);
+
+            // TODO Show animated card actions
+
+
+            // TODO Game over screen
         }
 
         public void EndTurn()
