@@ -12,6 +12,7 @@ namespace Display
         [SerializeField] private CardLayout handLayout;
         [SerializeField] private EnergyDisplay energyDisplay;
         [SerializeField] private TargettingArrow targettingArrow;
+        [SerializeField] private EncounterRewardsWindow encounterRewardsWindow;
         private bool _draggedCardActive;
         private CardDisplay _draggedCard;
         private Vector2 _draggedCardStartPosition;
@@ -19,6 +20,15 @@ namespace Display
         private void Awake()
         {
             game.Battle.OnStartEncounter += StartEncounter;
+            game.Battle.OnEndEncounter += EndEncounter;
+            
+            encounterRewardsWindow.OnClose += game.StartNextEncounter;
+        }
+
+        private void EndEncounter()
+        {
+            // Game over screen
+            encounterRewardsWindow.Show();
         }
 
         private void Update()
@@ -57,7 +67,6 @@ namespace Display
                 var endPosition = selectedEnemy != null
                     ? selectedEnemy.transform.position
                     : Game.Camera.ScreenToWorldPoint(Input.mousePosition);
-                // DrawBasics2D.Vector(startPosition, endPosition);
                 targettingArrow.Show(startPosition, endPosition);
             }
             else
@@ -120,9 +129,6 @@ namespace Display
             energyDisplay.Show(game.Battle.Player);
 
             // TODO Show animated card actions
-
-
-            // TODO Game over screen
         }
 
         public void EndTurn()

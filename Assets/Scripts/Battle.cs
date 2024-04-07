@@ -9,6 +9,7 @@ public class Battle
     public readonly List<Enemy> Enemies = new();
     public readonly Player Player;
     public event Action OnStartEncounter;
+    public event Action OnEndEncounter;
 
     public Battle(CardFactory cardFactory, Player player)
     {
@@ -17,14 +18,9 @@ public class Battle
 
     }
 
-    public void Start(Level level)
+    public void StartEncounter(Encounter encounter)
     {
-        StartEncounter(level);
-    }
-
-    private void StartEncounter(Level level)
-    {
-        SpawnEnemies(level.CurrentEncounter);
+        SpawnEnemies(encounter);
 
         foreach (var enemy in Enemies)
             enemy.OnDeath += () =>
@@ -33,18 +29,7 @@ public class Battle
 
                 if (Enemies.Count == 0)
                 {
-                    // TODO End encounter
-                    Debug.Log("Encounter is won!");
-                    if (level.CanAdvance())
-                    {
-                        level.Advance();
-                        StartEncounter(level);
-                    }
-                    else
-                    {
-                        // TODO End level
-                        Debug.Log("Level is won!");
-                    }
+                    OnEndEncounter?.Invoke();
                 }
             };
         CreateIntents();

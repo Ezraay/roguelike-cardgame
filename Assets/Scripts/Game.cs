@@ -7,6 +7,7 @@ public class Game : MonoBehaviour
     [SerializeField] private CardBlueprint[] cardBlueprints;
     public Battle Battle { get; private set; }
     public static Camera Camera { get; private set; }
+    private Level _level;
 
 
     private void Awake()
@@ -29,12 +30,20 @@ public class Game : MonoBehaviour
         });
         var player = new Player(100, deck);
         Battle = new Battle(cardFactory, player);
+        _level = new Level(new Encounter(new Encounter()));
     }
 
     private void Start()
     {
-        
-        var level = new Level(new Encounter(new Encounter()));
-        Battle.Start(level);
+        Battle.StartEncounter(_level.CurrentEncounter);
+    }
+
+    public void StartNextEncounter()
+    {
+        if (_level.CanAdvance())
+        {
+            _level.Advance();
+            Battle.StartEncounter(_level.CurrentEncounter);
+        }
     }
 }
