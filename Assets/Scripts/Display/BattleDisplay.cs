@@ -21,30 +21,13 @@ namespace Display
         {
             game.Battle.OnStartEncounter += StartEncounter;
             game.Battle.OnEndEncounter += EndEncounter;
-            
-            encounterRewardsWindow.OnClose += game.StartNextEncounter;
-        }
 
-        private void EndEncounter()
-        {
-            // Game over screen
-            encounterRewardsWindow.Show();
+            encounterRewardsWindow.OnClose += game.StartNextEncounter;
         }
 
         private void Update()
         {
-            if (Input.GetMouseButtonDown(0))
-            {
-                // Raycast for card
-                var ray = Game.Camera.ScreenPointToRay(Input.mousePosition);
-                var hit = Physics2D.Raycast(ray.origin, ray.direction);
-                if (hit.collider != null)
-                {
-                    _draggedCard = hit.collider.GetComponent<CardDisplay>();
-                    _draggedCardStartPosition = _draggedCard.transform.position;
-                    _draggedCardActive = false;
-                }
-            }
+            if (Input.GetMouseButtonDown(0)) StartDragging();
 
             if (_draggedCard == null) return;
             if (handLayout.IsMouseOver() && _draggedCardActive) // Dragged card back to hand
@@ -55,18 +38,71 @@ namespace Display
             else if (!handLayout.IsMouseOver() && !_draggedCardActive) // Dragged card from hand
             {
                 _draggedCardActive = true;
-                if (_draggedCard.Card.TargetingType == TargetingType.Enemy)
-                    _draggedCard.gameObject.SetActive(false);
+                _draggedCard.gameObject.SetActive(_draggedCard.Card.TargetingType != TargetingType.Enemy);
             }
 
             var selectedEnemy = enemyLayout.GetHoveredEnemy();
+            UpdateCardPosition(selectedEnemy);
+
+            if (Input.GetMouseButtonUp(0) && _draggedCard != null) StopDragging(selectedEnemy);
+        }
+
+        private void StartDragging()
+        {
+            // Raycast for card
+            var ray = Game.Camera.ScreenPointToRay(Input.mousePosition);
+            var hit = Physics2D.Raycast(ray.origin, ray.direction);
+            if (hit.collider != null)
+            {
+                _draggedCard = hit.collider.GetComponent<CardDisplay>();
+                _draggedCardStartPosition = _draggedCard.transform.position;
+                _draggedCardActive = false;
+            }
+        }
+
+        private void StopDragging(EntityDisplay selectedEnemy)
+        {
+            if (TryUseCard(selectedEnemy?.Entity))
+            {
+                handLayout.RemoveCard(_draggedCard);
+                Destroy(_draggedCard.gameObject);
+            }
+            else
+            {
+                _draggedCard.gameObject.SetActive(true);
+            }
+
+            _draggedCard = null;
+            handLayout.RepositionCards();
+            targettingArrow.Hide();
+        }
+
+        private bool TryUseCard(Entity selectedEnemy)
+        {
+            if (!handLayout.IsMouseOver())
+            {
+                var card = _draggedCard.Card;
+                var target = card.TargetingType == TargetingType.Enemy
+                    ? selectedEnemy
+                    : game.Battle.Player.Entity;
+                if (target != null && game.Battle.UseCard(card, target))
+                    return true;
+            }
+
+            return false;
+        }
+
+        private void UpdateCardPosition(EntityDisplay selectedEnemy)
+        {
+            var mousePosition = Game.Camera.ScreenToWorldPoint(Input.mousePosition);
+            mousePosition.z = 0;
 
             if (_draggedCardActive && _draggedCard.Card.TargetingType == TargetingType.Enemy)
             {
                 var startPosition = _draggedCardStartPosition;
                 var endPosition = selectedEnemy != null
                     ? selectedEnemy.transform.position
-                    : Game.Camera.ScreenToWorldPoint(Input.mousePosition);
+                    : mousePosition;
                 targettingArrow.Show(startPosition, endPosition);
             }
             else
@@ -74,42 +110,15 @@ namespace Display
                 targettingArrow.Hide();
             }
 
-            var position = Game.Camera.ScreenToWorldPoint(Input.mousePosition);
-            position.z = 0;
-            _draggedCard.transform.position = position;
+            _draggedCard.transform.position = mousePosition;
+        }
 
-            if (Input.GetMouseButtonUp(0) && _draggedCard != null)
-            {
-                var returnCard = true;
-                if (!handLayout.IsMouseOver())
-                {
-                    var card = _draggedCard.Card;
-                    if (card.TargetingType == TargetingType.Enemy)
-                    {
-                        if (selectedEnemy != null && game.Battle.UseCard(card, selectedEnemy.Entity))
-                            returnCard = false;
-                    }
-                    else if (game.Battle.UseCard(card, game.Battle.Player.Entity))
-                    {
-                        returnCard = false;
-                    }
-                }
-
-
-                if (returnCard)
-                {
-                    _draggedCard.gameObject.SetActive(true);
-                }
-                else
-                {
-                    handLayout.RemoveCard(_draggedCard);
-                    Destroy(_draggedCard.gameObject);
-                }
-
-                _draggedCard = null;
-                handLayout.RepositionCards();
-                targettingArrow.Hide();
-            }
+        public void EndTurn()
+        {
+            // Allow player to end turn
+            game.Battle.EndTurn();
+            handLayout.Show(game.Battle.Player.Hand);
+            enemyLayout.UpdateIntents(game.Battle.Enemies);
         }
 
         private void StartEncounter()
@@ -131,12 +140,10 @@ namespace Display
             // TODO Show animated card actions
         }
 
-        public void EndTurn()
+        private void EndEncounter()
         {
-            // Allow player to end turn
-            game.Battle.EndTurn();
-            handLayout.Show(game.Battle.Player.Hand);
-            enemyLayout.UpdateIntents(game.Battle.Enemies);
+            // Game over screen
+            encounterRewardsWindow.Show();
         }
     }
 }
