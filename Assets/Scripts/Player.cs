@@ -13,8 +13,6 @@ public class Player
     {
         _deck = deck;
         Entity = new Entity(health);
-        Pile = deck.CreatePile();
-        Shuffle(Pile);
     }
 
     public int Energy { get; private set; }
@@ -73,6 +71,7 @@ public class Player
     public void Reset()
     {
         Pile = _deck.CreatePile();
+        Shuffle(Pile);
         Hand.Clear();
         Discard.Clear();
     }
