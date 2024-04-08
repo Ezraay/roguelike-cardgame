@@ -36,7 +36,7 @@ namespace BattleSystem
             CreateIntents();
 
             Player.Reset();
-            Player.StartTurn();
+            Player.OnStartTurn();
             OnStartEncounter?.Invoke();
         }
 
@@ -44,7 +44,7 @@ namespace BattleSystem
         {
             if (Player.Energy < card.EnergyCost) return false;
             Player.UseEnergy(card.EnergyCost);
-            PerformCard(card, Player.Entity, target);
+            PerformCard(card, Player, target);
             return true;
         }
 
@@ -56,7 +56,7 @@ namespace BattleSystem
 
             PerformEnemyTurns();
             CreateIntents();
-            Player.StartTurn();
+            Player.OnStartTurn();
         }
 
         private void PerformEnemyTurns()
@@ -64,7 +64,7 @@ namespace BattleSystem
             foreach (var enemy in Enemies)
             {
                 var intent = enemy.GetIntents();
-                foreach (var card in intent) PerformCard(card, enemy, Player.Entity);
+                foreach (var card in intent) PerformCard(card, enemy, Player);
             }
 
             CreateIntents();
@@ -79,7 +79,7 @@ namespace BattleSystem
                     target = author;
                     break;
                 case TargetingType.AllEnemies:
-                    enemies = author == Player.Entity ? Enemies.ConvertAll(e => (Entity) e) : new List<Entity> {Player.Entity};
+                    enemies = author == Player ? new List<Entity>(Enemies) : new List<Entity> {Player};
                     break;
             }
 

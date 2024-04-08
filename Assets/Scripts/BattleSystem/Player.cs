@@ -3,26 +3,23 @@ using UnityEngine;
 
 namespace BattleSystem
 {
-    public class Player
+    public class Player : Entity
     {
-        public readonly Entity Entity;
         public List<Card> Pile;
         public readonly List<Card> Discard = new();
         public readonly List<Card> Hand = new();
         private readonly Deck _deck;
 
-        public Player(int health, Deck deck)
+        public Player(int health, Deck deck) : base(health)
         {
             _deck = deck;
-            Entity = new Entity(health);
         }
 
         public int Energy { get; private set; }
         public int EnergyPerTurn => 3;
 
-        public void StartTurn()
+        public override void OnStartTurn()
         {
-            Entity.OnStartTurn();
             Energy = EnergyPerTurn;
 
             // Draw 5

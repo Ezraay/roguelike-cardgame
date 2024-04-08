@@ -30,7 +30,7 @@ namespace BattleSystem
             Block += block;
         }
 
-        public void OnStartTurn()
+        public virtual void OnStartTurn()
         {
             Block = 0;
         }

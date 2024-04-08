@@ -16,6 +16,7 @@ public class DeckBuilderDisplay : MonoBehaviour
 
         _deck = GlobalState.GetDeck();
         deckView.Show(_deck.CreatePile());
+        deckView.Sort();
     }
 
     private void Update()
@@ -45,6 +46,7 @@ public class DeckBuilderDisplay : MonoBehaviour
                     var newCardDisplay = Instantiate(cardDisplayPrefab, deckView.transform);
                     newCardDisplay.ShowCard(card);
                     deckView.AddCard(newCardDisplay);
+                    deckView.Sort();
                 }
             }
         }

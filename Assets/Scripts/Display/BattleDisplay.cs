@@ -87,7 +87,7 @@ namespace Display
                 var card = _draggedCard.Card;
                 var target = card.TargetingType == TargetingType.Enemy
                     ? selectedEnemy
-                    : game.Battle.Player.Entity;
+                    : game.Battle.Player;
                 if (target != null && game.Battle.UseCard(card, target))
                     return true;
             }
@@ -128,7 +128,7 @@ namespace Display
         {
             // Show player and enemy health
             var playerDisplay = Instantiate(entityDisplayPrefab, playerDisplayParent);
-            playerDisplay.Show(game.Battle.Player.Entity);
+            playerDisplay.Show(game.Battle.Player);
             enemyLayout.Show(game.Battle.Enemies);
 
 

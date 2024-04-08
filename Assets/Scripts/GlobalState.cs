@@ -13,24 +13,14 @@ public static class GlobalState
 
     public static Deck GetDeck()
     {
-        _playerDeck ??= new Deck(
-            CardFactory.CreateCard("strike"),
-            CardFactory.CreateCard("strike"),
-            CardFactory.CreateCard("strike"),
-            CardFactory.CreateCard("strike"),
-            CardFactory.CreateCard("strike"),
-            CardFactory.CreateCard("defend"),
-            CardFactory.CreateCard("defend"),
-            CardFactory.CreateCard("defend"),
-            CardFactory.CreateCard("defend"),
-            CardFactory.CreateCard("defend")
-        );
+        _playerDeck ??= DeckSave.LoadDeck(CardFactory);
         return _playerDeck;
     }
 
     public static void SaveDeck(Deck deck)
     {
         _playerDeck = deck;
+        DeckSave.SaveDeck(deck);
     }
 
     public static CardFactory GetCardFactory()
