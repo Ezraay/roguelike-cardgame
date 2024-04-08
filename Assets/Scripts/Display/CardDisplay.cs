@@ -28,14 +28,14 @@ namespace Display
             canvas.sortingOrder = sortingOrder;
         }
 
-        public bool IsMouseOver(Vector2 mousePosition)
+        public bool IsPointOver(Vector2 point)
         {
             var rect = new Rect((Vector2)transform.position - CardSize / 2f, CardSize);
             var rectAngle = transform.eulerAngles.z * Mathf.Deg2Rad;
             var s = Mathf.Sin(-rectAngle);
             var c = Mathf.Cos(-rectAngle);
 
-            var newPoint = mousePosition - rect.center;
+            var newPoint = point - rect.center;
             newPoint = new Vector2(newPoint.x * c - newPoint.y * s, newPoint.x * s + newPoint.y * c);
             newPoint += rect.center;
 

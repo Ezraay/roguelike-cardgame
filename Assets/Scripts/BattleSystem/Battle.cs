@@ -72,14 +72,18 @@ namespace BattleSystem
 
         private void PerformCard(Card card, Entity author, Entity target)
         {
+            IEnumerable<Entity> enemies = null;
             switch (card.TargetingType)
             {
                 case TargetingType.Self:
                     target = author;
                     break;
+                case TargetingType.AllEnemies:
+                    enemies = author == Player.Entity ? Enemies.ConvertAll(e => (Entity) e) : new List<Entity> {Player.Entity};
+                    break;
             }
 
-            card.Use(author, target);
+            card.Use(author, target, enemies);
         }
 
         private void SpawnEnemies(Encounter encounter)

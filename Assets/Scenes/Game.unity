@@ -431,9 +431,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf0c12f69dc24ed7bf52189eca680ce1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cardBlueprints:
-  - {fileID: 11400000, guid: 92913e6706ca3a4469339f0b4580868a, type: 2}
-  - {fileID: 11400000, guid: 87e049bda8d48c74fbe3cd9d96748fbe, type: 2}
 --- !u!1 &484087986
 GameObject:
   m_ObjectHideFlags: 0
@@ -822,9 +819,10 @@ MonoBehaviour:
   sortingOrder: 0
   cardSpacing: {x: 0.15, y: 0}
   padding: {x: 2, y: 1}
-  cardSizeMultiplier: {x: 1, y: 0}
   middleCardOffset: {x: 0, y: -0.1}
   cardRotation: -2
+  wrapCards: 0
+  columnCount: 3
 --- !u!1 &839765268
 GameObject:
   m_ObjectHideFlags: 0
@@ -1779,7 +1777,7 @@ MonoBehaviour:
   enemyLayout: {fileID: 1309165210}
   handLayout: {fileID: 780728302}
   energyDisplay: {fileID: 839765270}
-  targettingArrow: {fileID: 1618279501}
+  targetingArrow: {fileID: 1618279501}
   encounterRewardsWindow: {fileID: 1067011672}
 --- !u!4 &1850668324
 Transform:

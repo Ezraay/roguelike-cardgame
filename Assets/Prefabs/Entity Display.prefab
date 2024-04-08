@@ -735,7 +735,6 @@ MonoBehaviour:
   healthBar: {fileID: 4612372895112624178}
   blockBar: {fileID: 1014594245953593551}
   rectSize: {x: 5, y: 5}
-  cardDisplayPrefab: {fileID: 0}
   intentDisplay: {fileID: 6825680691410210233}
 --- !u!1 &7490356143613821874
 GameObject:
@@ -786,6 +785,7 @@ MonoBehaviour:
   sortingOrder: 0
   cardSpacing: {x: 0, y: 0}
   padding: {x: 0, y: 0}
-  cardSizeMultiplier: {x: 1, y: 0}
   middleCardOffset: {x: 0, y: 0}
-  cardRotation: 10
+  cardRotation: 0
+  wrapCards: 0
+  columnCount: 3

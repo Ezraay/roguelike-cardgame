@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Effects;
 
 namespace BattleSystem
@@ -21,7 +22,7 @@ namespace BattleSystem
             _effects = effects;
         }
 
-        public void Use(Entity author, Entity target)
+        public void Use(Entity author, Entity target, IEnumerable<Entity> enemies)
         {
             switch (TargetingType)
             {
@@ -30,6 +31,15 @@ namespace BattleSystem
                 case TargetingType.RandomAlly:
                 {
                     foreach (var effect in _effects) effect.Perform(author, target);
+
+                    break;
+                }
+                case TargetingType.AllEnemies:
+                {
+                    foreach (var enemy in enemies)
+                    {
+                        foreach (var effect in _effects) effect.Perform(author, enemy);
+                    }
 
                     break;
                 }
@@ -48,6 +58,13 @@ namespace BattleSystem
             }
             return description;
             // return string.Join(Environment.NewLine, Array.ConvertAll(_effects, effect => effect.GetDescription(null, TODO)));
+        }
+
+        public Card Copy()
+        {
+            var effects = new IEffect[_effects.Length];
+            _effects.CopyTo(effects, 0);
+            return new Card(Name, Id, TargetingType, EnergyCost, effects);
         }
     }
 }

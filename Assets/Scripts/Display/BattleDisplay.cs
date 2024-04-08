@@ -29,15 +29,16 @@ namespace Display
 
         private void Update()
         {
+            var mousePosition = Game.Camera.ScreenToWorldPoint(Input.mousePosition);
             if (Input.GetMouseButtonDown(0)) StartDragging();
 
             if (_draggedCard == null) return;
-            if (handLayout.IsMouseOver() && _draggedCardActive) // Dragged card back to hand
+            if (handLayout.IsPointOver(mousePosition) && _draggedCardActive) // Dragged card back to hand
             {
                 _draggedCardActive = false;
                 _draggedCard.gameObject.SetActive(true);
             }
-            else if (!handLayout.IsMouseOver() && !_draggedCardActive) // Dragged card from hand
+            else if (!handLayout.IsPointOver(mousePosition) && !_draggedCardActive) // Dragged card from hand
             {
                 _draggedCardActive = true;
                 _draggedCard.gameObject.SetActive(_draggedCard.Card.TargetingType != TargetingType.Enemy);
@@ -81,7 +82,7 @@ namespace Display
 
         private bool TryUseCard(Entity selectedEnemy)
         {
-            if (!handLayout.IsMouseOver())
+            if (!handLayout.IsPointOver(Game.Camera.ScreenToWorldPoint(Input.mousePosition)))
             {
                 var card = _draggedCard.Card;
                 var target = card.TargetingType == TargetingType.Enemy
