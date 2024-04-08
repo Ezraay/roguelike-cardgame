@@ -9,8 +9,8 @@ namespace BattleSystem
         public Battle Battle { get; private set; }
         public static Camera Camera { get; private set; }
     
-        public event Action OnStartEncounter;
-        public event Action OnEndEncounter;
+        public event Action<Encounter> OnStartEncounter;
+        public event Action<Encounter> OnEndEncounter;
 
 
         public void StartBattle(CardFactory cardFactory, Deck deck, Level level)

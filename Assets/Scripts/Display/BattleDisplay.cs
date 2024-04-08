@@ -124,7 +124,7 @@ namespace Display
             enemyLayout.UpdateIntents(game.Battle.Enemies);
         }
 
-        private void StartEncounter()
+        private void StartEncounter(Encounter encounter)
         {
             // Show player and enemy health
             var playerDisplay = Instantiate(entityDisplayPrefab, playerDisplayParent);
@@ -143,10 +143,10 @@ namespace Display
             // TODO Show animated card actions
         }
 
-        private void EndEncounter()
+        private void EndEncounter(Encounter encounter)
         {
             // Game over screen
-            encounterRewardsWindow.Show();
+            encounterRewardsWindow.Show(!encounter.HasNextEncounter());
         }
     }
 }

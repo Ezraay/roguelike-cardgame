@@ -9,8 +9,8 @@ namespace BattleSystem
         private readonly CardFactory _cardFactory;
         public readonly List<Enemy> Enemies = new();
         public readonly Player Player;
-        public event Action OnStartEncounter;
-        public event Action OnEndEncounter;
+        public event Action<Encounter> OnStartEncounter;
+        public event Action<Encounter> OnEndEncounter;
 
         public Battle(CardFactory cardFactory, Player player)
         {
@@ -30,14 +30,14 @@ namespace BattleSystem
 
                     if (Enemies.Count == 0)
                     {
-                        OnEndEncounter?.Invoke();
+                        OnEndEncounter?.Invoke(encounter);
                     }
                 };
             CreateIntents();
 
             Player.Reset();
             Player.OnStartTurn();
-            OnStartEncounter?.Invoke();
+            OnStartEncounter?.Invoke(encounter);
         }
 
         public bool UseCard(Card card, Entity target)
