@@ -1,0 +1,35 @@
+﻿- name: "Strike"
+  id: strike
+  cost: 1
+  types: [attack, melee]
+  effects:
+    - target: enemy
+      effect: damage
+      amount: 6
+- name: "Defend"
+  id: defend
+  cost: 1
+  types: [defense]
+  effects: 
+    - target: self
+      effect: block
+      amount: 5
+- name: "Cleave"
+  id: cleave
+  cost: 1
+  types: [attack, melee]
+  effects:
+    - target: all-enemies
+      effect: damage
+      amount: 4
+- name: "Shield Bash"
+  id: bash
+  cost: 2
+  types: [attack, melee]
+  effects:
+    - target: enemy
+      effect: damage
+      amount: 4
+    - target: self
+      effect: block
+      amount: 5

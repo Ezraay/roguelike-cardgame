@@ -6,6 +6,7 @@ namespace BattleSystem
 {
     public class Card
     {
+        private readonly Guid _guid;
         private readonly IEffect[] _effects;
         public readonly int EnergyCost;
         public readonly string Name;
@@ -15,6 +16,7 @@ namespace BattleSystem
 
         public Card(string name, string id, TargetingType targetingType, int energyCost, IEffect[] effects)
         {
+            _guid = Guid.NewGuid();
             Name = name;
             Id = id;
             TargetingType = targetingType;
@@ -24,28 +26,28 @@ namespace BattleSystem
 
         public void Use(Entity author, Entity target, IEnumerable<Entity> enemies)
         {
-            switch (TargetingType)
-            {
-                case TargetingType.Enemy:
-                case TargetingType.Self:
-                case TargetingType.RandomAlly:
+            foreach (var effect in _effects)
+                switch (effect.TargetingType)
                 {
-                    foreach (var effect in _effects) effect.Perform(author, target);
-
-                    break;
-                }
-                case TargetingType.AllEnemies:
-                {
-                    foreach (var enemy in enemies)
+                    case TargetingType.Enemy:
                     {
-                        foreach (var effect in _effects) effect.Perform(author, enemy);
+                        effect.Perform(author, target);
+                        break;
                     }
-
-                    break;
+                    case TargetingType.Self:
+                    {
+                        effect.Perform(author, author);
+                        break;
+                    }
+                    case TargetingType.AllEnemies:
+                    {
+                        foreach (var enemy in enemies)
+                            effect.Perform(author, enemy);
+                        break;
+                    }
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
         }
 
         public string GetDescription()
@@ -53,9 +55,10 @@ namespace BattleSystem
             var description = "";
             foreach (var effect in _effects)
             {
-                var line = effect.GetDescription(null, TargetingType);
+                var line = effect.GetDescription(null);
                 description += line;
             }
+
             return description;
             // return string.Join(Environment.NewLine, Array.ConvertAll(_effects, effect => effect.GetDescription(null, TODO)));
         }
@@ -65,6 +68,13 @@ namespace BattleSystem
             var effects = new IEffect[_effects.Length];
             _effects.CopyTo(effects, 0);
             return new Card(Name, Id, TargetingType, EnergyCost, effects);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is Card card) return _guid == card._guid;
+
+            return false;
         }
     }
 }

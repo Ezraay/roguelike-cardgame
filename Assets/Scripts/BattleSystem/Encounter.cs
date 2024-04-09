@@ -18,10 +18,18 @@ namespace BattleSystem
 
         public IEnumerable<Enemy> GetEnemies()
         {
+            if (_nextEncounter == null)
+                return new[]
+                {
+                    new Enemy(40),
+                    new Enemy(50),
+                    new Enemy(40)
+                };
             return new[]
             {
-                new Enemy(2),
-                new Enemy(1)
+                new Enemy(30),
+                new Enemy(20),
+                new Enemy(20)
             };
         }
 

@@ -2,9 +2,10 @@
 {
     public enum TargetingType
     {
+        // Order matters, highest targeting of card effects is chosen
         Self,
-        Enemy,
         AllEnemies,
-        RandomAlly
+        RandomAlly,
+        Enemy,
     }
 }

@@ -19,8 +19,14 @@ namespace BattleSystem
         public bool RemoveCard(Card card)
         {
             if (_cards.Count <= 10) return false;
-            _cards.Remove(card);
-            return true;
+            for (var i = 0; i < _cards.Count; i++)
+                if (_cards[i].Equals(card))
+                {
+                    _cards.RemoveAt(i);
+                    return true;
+                }
+
+            return false;
         }
 
         public void AddCard(Card card)

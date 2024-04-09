@@ -41,8 +41,8 @@ public class DeckBuilderDisplay : MonoBehaviour
                 var cardDisplay = collectionView.GetCardDisplayOver(mousePosition);
                 if (cardDisplay != null)
                 {
-                    var card = cardDisplay.Card;
-                    _deck.AddCard(card.Copy());
+                    var card = cardDisplay.Card.Copy();
+                    _deck.AddCard(card);
                     var newCardDisplay = Instantiate(cardDisplayPrefab, deckView.transform);
                     newCardDisplay.ShowCard(card);
                     deckView.AddCard(newCardDisplay);

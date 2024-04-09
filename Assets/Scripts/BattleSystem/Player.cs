@@ -20,6 +20,7 @@ namespace BattleSystem
 
         public override void OnStartTurn()
         {
+            base.OnStartTurn();
             Energy = EnergyPerTurn;
 
             // Draw 5

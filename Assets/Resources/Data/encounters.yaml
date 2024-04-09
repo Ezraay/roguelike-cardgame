@@ -1,0 +1,17 @@
+﻿- name: "Goblin Hut"
+  id: goblin-hut
+  encounters:
+    - enemies:
+      - name: Goblin Warrior
+        id: goblin
+        hp: 20
+        cards: [ defend ]
+      - name: Goblin Thief
+        id: goblin
+        hp: 10
+        cards: [ strike, defend ]
+    - enemies:
+      - name: Goblin Elder
+        id: goblin
+        hp: 40
+        cards: [ strike, strike, defend ]

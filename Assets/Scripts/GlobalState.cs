@@ -1,19 +1,29 @@
-﻿using BattleSystem;
+﻿using System;
+using System.Linq;
+using BattleSystem;
 using Effects;
+using UnityEngine;
+using YamlDotNet.Serialization;
 
 public static class GlobalState
 {
+    private const string CardsPath = "Data/cards";
     private static Deck _playerDeck;
+    private static CardFactory _cardFactory;
 
-    private static readonly CardFactory CardFactory = new(
-        new CardBlueprint("Strike", 1, TargetingType.Enemy, new DealDamage(6)),
-        new CardBlueprint("Defend", 1, TargetingType.Self, new AddBlock(5)),
-        new CardBlueprint("Cleave", 2, TargetingType.AllEnemies, new DealDamage(4))
-    );
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    private static void Load()
+    {
+        // Read file from StreamingAssets into string
+        var cardsYaml = Resources.Load<TextAsset>(CardsPath).text;
+        
+
+        _cardFactory = new CardFactory(cardsYaml);
+    }
 
     public static Deck GetDeck()
     {
-        _playerDeck ??= DeckSave.LoadDeck(CardFactory);
+        _playerDeck ??= DeckSave.LoadDeck(_cardFactory);
         return _playerDeck;
     }
 
@@ -25,6 +35,8 @@ public static class GlobalState
 
     public static CardFactory GetCardFactory()
     {
-        return CardFactory;
+        return _cardFactory;
     }
+
+    
 }

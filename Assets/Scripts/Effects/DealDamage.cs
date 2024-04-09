@@ -6,19 +6,22 @@ namespace Effects
     {
         private readonly int _damage;
 
-        public DealDamage(int damage)
+        public DealDamage(int damage, TargetingType targetingType)
         {
             _damage = damage;
+            TargetingType = targetingType;
         }
+
+        public TargetingType TargetingType { get; }
 
         public void Perform(Entity author, Entity target)
         {
             target.TakeDamage(_damage);
         }
 
-        public string GetDescription(Entity author, TargetingType targetingType)
+        public string GetDescription(Entity author)
         {
-            switch (targetingType)
+            switch (TargetingType)
             {
                 case TargetingType.AllEnemies:
                     return $"Deal {_damage} damage to all enemies. ";
