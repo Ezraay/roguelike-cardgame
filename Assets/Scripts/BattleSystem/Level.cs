@@ -2,21 +2,27 @@
 {
     public class Level
     {
-        public Level(Encounter startingEncounter)
+        private readonly Encounter[] _encounters;
+        private readonly string _id;
+        
+        public Level(string id, Encounter[] encounters)
         {
-            CurrentEncounter = startingEncounter;
+            _id = id;
+            _encounters = encounters;
+            CurrentEncounter = _encounters[0];
         }
 
         public Encounter CurrentEncounter { get; private set; }
+        private int _currentEncounterIndex = 0;
 
         public void Advance()
         {
-            CurrentEncounter = CurrentEncounter.GetNextEncounter();
+            CurrentEncounter = _encounters[++_currentEncounterIndex];
         }
 
         public bool CanAdvance()
         {
-            return CurrentEncounter.HasNextEncounter();
+            return _currentEncounterIndex < _encounters.Length - 1;
         }
     }
 }

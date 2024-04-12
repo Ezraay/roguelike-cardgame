@@ -23,7 +23,7 @@
       effect: damage
       amount: 4
 - name: "Shield Bash"
-  id: bash
+  id: shield-bash
   cost: 2
   types: [attack, melee]
   effects:

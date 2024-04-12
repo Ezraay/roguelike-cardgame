@@ -10,7 +10,7 @@ namespace BattleSystem
         public readonly List<Card> Hand = new();
         private readonly Deck _deck;
 
-        public Player(int health, Deck deck) : base(health)
+        public Player(int health, Deck deck) : base("Player", health)
         {
             _deck = deck;
         }

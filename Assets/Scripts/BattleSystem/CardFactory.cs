@@ -10,18 +10,18 @@ namespace BattleSystem
     {
         private readonly Dictionary<string, CardBlueprint> _cardBlueprints = new();
 
-        public CardFactory(string cardData)
+        public CardFactory(string rawCardFile)
         {
             var deserializer = new DeserializerBuilder()
                 .Build();
-            var cardDatas = deserializer.Deserialize<CardData[]>(cardData);
-            var cards = cardDatas.Select(x => x.CreateCardBlueprint());
+            var cardData = deserializer.Deserialize<CardData[]>(rawCardFile);
+            var cards = cardData.Select(x => x.CreateCardBlueprint());
             foreach (var blueprint in cards) _cardBlueprints.Add(blueprint.Id, blueprint);
         }
 
         public Card CreateCard(string id)
         {
-            return _cardBlueprints[id].CreateCard();
+            return _cardBlueprints.TryGetValue(id, out var blueprint) ? blueprint.CreateCard() : null;
         }
 
         public List<Card> GetSearch(string query = "")

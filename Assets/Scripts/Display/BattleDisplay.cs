@@ -146,7 +146,7 @@ namespace Display
         private void EndEncounter(Encounter encounter)
         {
             // Game over screen
-            encounterRewardsWindow.Show(!encounter.HasNextEncounter());
+            encounterRewardsWindow.Show(!game.CanAdvanceEncounter());
         }
     }
 }

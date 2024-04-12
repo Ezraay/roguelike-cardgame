@@ -7,7 +7,7 @@ namespace MainMenu
     {
         public void StartBattle()
         {
-            var level = new Level(new Encounter(new Encounter())); // TODO Move to level selection
+            var level = GlobalState.GetLevelFactory().GetLevel("goblin-hut");
             BattleStart.LoadBattleScene(GlobalState.GetDeck(), level);
         }
 

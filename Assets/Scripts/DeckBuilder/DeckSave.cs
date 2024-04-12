@@ -18,7 +18,12 @@ public class DeckSave
     {
         var cards = ES3.Load(savePath, defaultDeck);
         var deck = new Deck();
-        cards.ForEach(cardId => deck.AddCard(cardFactory.CreateCard(cardId)));
+        cards.ForEach(cardId =>
+        {
+            var card = cardFactory.CreateCard(cardId);
+            if (card != null)
+                deck.AddCard(card);
+        });
         return deck;
     }
 }

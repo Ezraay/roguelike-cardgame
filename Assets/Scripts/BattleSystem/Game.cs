@@ -34,5 +34,10 @@ namespace BattleSystem
                 Battle.StartEncounter(_level.CurrentEncounter);
             }
         }
+
+        public bool CanAdvanceEncounter()
+        {
+            return _level.CanAdvance(); 
+        }
     }
 }

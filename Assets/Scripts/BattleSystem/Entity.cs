@@ -5,8 +5,10 @@ namespace BattleSystem
 {
     public class Entity
     {
-        public Entity(int maxHealth)
+        private string _name;
+        public Entity(string name, int maxHealth)
         {
+            _name = name;
             MaxHealth = maxHealth;
             Health = maxHealth;
         }
